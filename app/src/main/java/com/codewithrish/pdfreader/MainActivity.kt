@@ -6,11 +6,11 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -18,7 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +28,9 @@ import com.codewithrish.pdfreader.MainUiState.Success
 import com.codewithrish.pdfreader.model.DarkThemeConfig
 import com.codewithrish.pdfreader.model.ThemeBrand
 import com.codewithrish.pdfreader.ui.theme.PdfReaderTheme
+import com.rizzi.bouquet.ResourceType
+import com.rizzi.bouquet.VerticalPDFReader
+import com.rizzi.bouquet.rememberVerticalPdfReaderState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -96,10 +99,24 @@ class MainActivity : ComponentActivity() {
                     androidTheme = shouldUseAndroidTheme(uiState),
                     disableDynamicTheming = shouldDisableDynamicTheming(uiState),
                 ) {
+
+//                    val pdfState = rememberVerticalPdfReaderState(
+//                        resource = ResourceType.Remote("https://myreport.altervista.org/Lorem_Ipsum.pdf"),
+//                        isZoomEnable = true
+//                    )
+//
+                    val pdfState = rememberVerticalPdfReaderState(
+                        resource = ResourceType.Asset(R.raw.resume),
+                        isZoomEnable = true
+                    )
+
                     Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-                        Greeting(
-                            name = "Android",
-                            modifier = Modifier.padding(innerPadding)
+                        VerticalPDFReader(
+                            state = pdfState,
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxSize()
+                                .background(color = Color.Gray)
                         )
                     }
                 }
@@ -108,7 +125,6 @@ class MainActivity : ComponentActivity() {
     }
 
 }
-
 
 @Composable
 private fun shouldUseDarkTheme(
@@ -138,22 +154,6 @@ private fun shouldUseAndroidTheme(
     is Success -> when (uiState.userData.themeBrand) {
         ThemeBrand.DEFAULT -> false
         ThemeBrand.ANDROID -> true
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PdfReaderTheme {
-        Greeting("Android")
     }
 }
 

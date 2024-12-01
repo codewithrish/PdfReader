@@ -20,6 +20,8 @@ composeViewModel = "2.8.7"
 ksp = "2.1.0-1.0.29"
 #Datastore
 androidxDataStore = "1.1.1"
+#Pdf Viewer
+bouquet = "1.1.2"
 #Splash Screen
 androidxCoreSplashscreen = "1.0.1"
 
@@ -51,6 +53,9 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 
 #Datastore
 androidx-dataStore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
+
+#Pdf Viewer
+bouquet = { module = "io.github.grizzi91:bouquet", version.ref = "bouquet" }
 
 #Splash Screen
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }

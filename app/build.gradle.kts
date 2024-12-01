@@ -108,10 +108,14 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler) // Use KSP for annotation processing
     implementation(libs.androidx.hilt.navigation.compose) // Uncomment if using Hilt Navigation Compose
+    implementation(libs.androidx.compose.viewmodel) // ViewModel
 
     // Datastore
     implementation(libs.androidx.dataStore)
 
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)
+
+    // Pdf Viewer
+    implementation(libs.bouquet)
 }
