@@ -1,4 +1,4 @@
-package com.codewithrish.pdfreader.model
+package com.codewithrish.pdfreader.core.model
 
 data class UserData(
     val themeBrand: ThemeBrand,

@@ -8,6 +8,9 @@ plugins {
     alias(libs.plugins.protobuf)
     alias(libs.plugins.hilt) // Hilt plugin
     alias(libs.plugins.ksp) // KSP plugin
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.crashlytics)
+    alias(libs.plugins.googleServices)
 }
 
 android {
@@ -45,6 +48,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -104,11 +108,19 @@ dependencies {
     implementation(libs.protobuf.protoc) // Protobuf runtime
     implementation(libs.protobuf.kotlin.lite)  // Optional: Kotlin extensions for Protobuf
 
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
     // Hilt dependencies
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler) // Use KSP for annotation processing
     implementation(libs.androidx.hilt.navigation.compose) // Uncomment if using Hilt Navigation Compose
     implementation(libs.androidx.compose.viewmodel) // ViewModel
+
+    // Room Database
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
     // Datastore
     implementation(libs.androidx.dataStore)
@@ -118,4 +130,46 @@ dependencies {
 
     // Pdf Viewer
     implementation(libs.bouquet)
+
+    // Adaptive
+    implementation(libs.androidx.compose.material3.navigationSuite)
+    implementation(libs.androidx.compose.material3.adaptive)
+
+    // Material Icons
+    implementation(libs.androidx.compose.material.iconsExtended)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.core)
+
+    // Time Zone
+    implementation(libs.kotlinx.datetime)
+
+    // Tracing
+    implementation(libs.androidx.compose.runtime.tracing)
+    implementation(libs.androidx.tracing.ktx)
+
+    // Permissions
+    implementation(libs.accompanist.permissions)
+
+    // Timber Logging
+    implementation(libs.timber)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.remote.config)
+    implementation(libs.firebase.crashlytics)
+
+    // Joda Time
+    implementation(libs.joda.time)
+
+    // MixPanel
+    implementation(libs.mixpanel.android)
+
+    // Animated Navigation
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
+    implementation ("androidx.compose.animation:animation:1.7.5")
+
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "542456030231",
+    "project_id": "pdfreader-c58e0",
+    "storage_bucket": "pdfreader-c58e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542456030231:android:41986afc7584a2cd382852",
+        "android_client_info": {
+          "package_name": "com.codewithrish.pdfreader"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo5VM8lgJow3-HeLWO-dWKU8AK5SQWP-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

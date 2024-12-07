@@ -1,9 +1,9 @@
 package com.codewithrish.pdfreader.core.datastore
 
 import androidx.datastore.core.DataStore
-import com.codewithrish.pdfreader.model.UserData
-import com.codewithrish.pdfreader.model.ThemeBrand
-import com.codewithrish.pdfreader.model.DarkThemeConfig
+import com.codewithrish.pdfreader.core.model.UserData
+import com.codewithrish.pdfreader.core.model.ThemeBrand
+import com.codewithrish.pdfreader.core.model.DarkThemeConfig
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 

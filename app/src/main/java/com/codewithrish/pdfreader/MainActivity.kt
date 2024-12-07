@@ -6,38 +6,43 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.codewithrish.pdfreader.MainUiState.Loading
 import com.codewithrish.pdfreader.MainUiState.Success
-import com.codewithrish.pdfreader.model.DarkThemeConfig
-import com.codewithrish.pdfreader.model.ThemeBrand
+import com.codewithrish.pdfreader.core.analytics.AnalyticsHelper
+import com.codewithrish.pdfreader.core.analytics.LocalAnalyticsHelper
+import com.codewithrish.pdfreader.core.data.util.TimeZoneMonitor
+import com.codewithrish.pdfreader.core.ui.LocalTimeZone
+import com.codewithrish.pdfreader.core.model.DarkThemeConfig
+import com.codewithrish.pdfreader.core.model.ThemeBrand
+import com.codewithrish.pdfreader.ui.CwrApp
+import com.codewithrish.pdfreader.ui.rememberCwrAppState
 import com.codewithrish.pdfreader.ui.theme.PdfReaderTheme
-import com.rizzi.bouquet.ResourceType
-import com.rizzi.bouquet.VerticalPDFReader
-import com.rizzi.bouquet.rememberVerticalPdfReaderState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var analyticsHelper: AnalyticsHelper
+
+    @Inject
+    lateinit var timeZoneMonitor: TimeZoneMonitor
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -56,9 +61,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Keep the splash screen on-screen until the UI state is loaded. This condition is
-        // evaluated each time the app needs to be redrawn so it should be fast to avoid blocking
-        // the UI.
         splashScreen.setKeepOnScreenCondition {
             when (uiState) {
                 Loading -> true
@@ -66,11 +68,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Turn off the decor fitting system windows, which allows us to handle insets,
-        // including IME animations, and go edge-to-edge
-        // This also sets up the initial system bar style based on the platform theme
         enableEdgeToEdge()
-
 
         setContent {
             val darkTheme = shouldUseDarkTheme(uiState)
@@ -89,39 +87,33 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
 
+            val appState = rememberCwrAppState(
+                timeZoneMonitor = timeZoneMonitor
+            )
+
+            val currentTimeZone by appState.currentTimeZone.collectAsStateWithLifecycle()
+
             CompositionLocalProvider(
 //                LocalDarkThemePreferences provides darkTheme,
 //                LocalAnalyticsHelper provides NoOpAnalyticsHelper.provides(),
 //                LocalLoggerProvider provides NoOpLoggerProvider.provides(),
+                LocalAnalyticsHelper provides analyticsHelper,
+                LocalTimeZone provides currentTimeZone,
             ) {
                 PdfReaderTheme(
                     darkTheme = darkTheme,
                     androidTheme = shouldUseAndroidTheme(uiState),
                     disableDynamicTheming = shouldDisableDynamicTheming(uiState),
                 ) {
-
-//                    val pdfState = rememberVerticalPdfReaderState(
-//                        resource = ResourceType.Remote("https://myreport.altervista.org/Lorem_Ipsum.pdf"),
-//                        isZoomEnable = true
-//                    )
-//
-                    val pdfState = rememberVerticalPdfReaderState(
-                        resource = ResourceType.Asset(R.raw.resume),
-                        isZoomEnable = true
-                    )
-
-                    Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-                        VerticalPDFReader(
-                            state = pdfState,
-                            modifier = Modifier
-                                .padding(innerPadding)
-                                .fillMaxSize()
-                                .background(color = Color.Gray)
-                        )
-                    }
+                    CwrApp(appState)
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadFiles()
     }
 
 }

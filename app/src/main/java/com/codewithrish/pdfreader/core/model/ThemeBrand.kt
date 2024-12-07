@@ -1,4 +1,4 @@
-package com.codewithrish.pdfreader.model
+package com.codewithrish.pdfreader.core.model
 
 enum class ThemeBrand {
     DEFAULT,

@@ -5,4 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.hilt) apply false // Hilt plugin
     alias(libs.plugins.ksp) apply false // KSP plugin
+    alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.googleServices) apply false
 }
