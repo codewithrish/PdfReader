@@ -40,6 +40,5 @@ fun NavGraphBuilder.homeSection(
                 )
             }
         }
-        documentScreen()
     }
 }
