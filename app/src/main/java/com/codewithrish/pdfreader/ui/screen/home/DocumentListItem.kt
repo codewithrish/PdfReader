@@ -1,55 +1,51 @@
 package com.codewithrish.pdfreader.ui.screen.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.R
 import com.codewithrish.pdfreader.core.common.util.DataUnitConverter
-import com.codewithrish.pdfreader.core.designsystem.component.CwrPreviews
+import com.codewithrish.pdfreader.core.designsystem.component.CwrCardView
+import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.model.room.DocumentEntity
-import kotlinx.serialization.json.Json
 import org.joda.time.DateTime
 import timber.log.Timber
 
 @Composable
 fun DocumentListItem(
-    document: DocumentEntity,
+    document: Document,
     onEvent: (HomeUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .clickable {
-                val jsonString = Json.encodeToString(DocumentEntity.serializer(), document)
-                onEvent(HomeUiEvent.OpenDocument(jsonString))
+//                val jsonString = Json.encodeToString(DocumentEntity.serializer(), document)
+                onEvent(HomeUiEvent.OpenDocument(document))
                 Timber.tag("DocumentItem").d(document.toString())
-            }
+            }.
+        height(60.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = painterResource(
@@ -65,49 +61,60 @@ fun DocumentListItem(
                     }
                 ),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                modifier = Modifier.size(40.dp).weight(.1f)
+                modifier = Modifier
+                    .size(60.dp)
             )
-            Spacer(modifier = Modifier.wrapContentSize().width(16.dp))
             Column(
-                modifier = Modifier.weight(.9f),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.Start
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.Start,
+                modifier = modifier.fillMaxHeight()
             ) {
                 Text(
-                    text = document.name,
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    fontWeight = FontWeight.Bold
+                    text = document.name.replaceFirstChar { it.uppercase() },
+                    fontSize = MaterialTheme.typography.labelLarge.fontSize,
+                    fontWeight = MaterialTheme.typography.labelLarge.fontWeight,
+                    fontFamily = MaterialTheme.typography.labelLarge.fontFamily,
                 )
-                Row {
-                    Text(text = DateTime(document.dateTime).toString("dd/MM/yyyy"),
-                        fontSize = MaterialTheme.typography.labelSmall.fontSize,)
-                    Text(text = " . ",
-                        fontSize = MaterialTheme.typography.labelSmall.fontSize,)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     Text(text = DataUnitConverter.formatDataSize(document.size),
-                        fontSize = MaterialTheme.typography.labelSmall.fontSize,)
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                        fontWeight = MaterialTheme.typography.labelMedium.fontWeight,
+                        fontFamily = MaterialTheme.typography.labelMedium.fontFamily
+                    )
+                    Text(text = DateTime(document.dateTime).toString("dd-MM-yyyy"),
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                        fontWeight = MaterialTheme.typography.labelMedium.fontWeight,
+                        fontFamily = MaterialTheme.typography.labelMedium.fontFamily
+                    )
                 }
             }
         }
-        Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background (Color.LightGray).alpha(0.1f))
     }
 }
 
-@CwrPreviews
+@Preview(showBackground = true)
 @Composable
 private fun DocumentItemPreview() {
-    DocumentListItem(
-        DocumentEntity(
-            id = 1,
-            path = "path",
-            uri = "uri",
-            name = "Rishabh Resume.pdf",
-            dateTime = 123456789,
-            mimeType = DocumentType.PPT.name,
-            size = 123456789,
-            bookmarked = false
-        ),
-        onEvent = {},
-        modifier = Modifier
-    )
+    Scaffold {
+        CwrCardView(
+            Modifier.height(92.dp).fillMaxWidth().padding(it)
+        ) {
+            DocumentListItem(
+                Document(
+                    id = 1,
+                    path = "path",
+                    uri = "uri",
+                    name = "Rishabh Resume.pdf",
+                    dateTime = 123456789,
+                    mimeType = DocumentType.PDF.name,
+                    size = 123456789,
+                    bookmarked = false
+                ),
+                onEvent = {},
+                modifier = Modifier
+            )
+        }
+    }
 }

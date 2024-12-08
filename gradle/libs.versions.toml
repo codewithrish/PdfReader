@@ -2,6 +2,7 @@
 agp = "8.7.2"
 jodaTime = "2.12.7"
 kotlin = "2.0.20"
+kotlinPlugin = "1.9.22"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -47,6 +48,10 @@ crashlytics = "3.0.2"
 mixpanelAndroid = "7.5.4"
 #Google Services
 google-services = "4.4.2"
+#Gson
+gson = "2.11.0"
+#Google Fonts
+googleFonts = "1.7.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -127,6 +132,12 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 #MixPanel
 mixpanel-android = { module = "com.mixpanel.android:mixpanel-android", version.ref = "mixpanelAndroid" }
 
+#Gson
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+#Google Fonts
+androidx-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "googleFonts" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -143,3 +154,5 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 #Google Services
 googleServices = { id = "com.google.gms.google-services", version.ref = "google-services" }
+#Kotlin Parcelize
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize",  version.ref = "kotlinPlugin" }

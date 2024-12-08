@@ -5,8 +5,9 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.ui.screen.bookmark.BookmarksRoute
-import com.codewithrish.pdfreader.ui.screen.home.HomeBaseRoute
+import com.codewithrish.pdfreader.ui.screen.home.HomeGraph
 import com.codewithrish.pdfreader.ui.screen.home.HomeRoute
+import com.codewithrish.pdfreader.ui.screen.tools.ToolsGraph
 import com.codewithrish.pdfreader.ui.screen.tools.ToolsRoute
 import kotlin.reflect.KClass
 
@@ -24,7 +25,7 @@ enum class TopLevelDestination(
         iconTextId = R.string.feature_home,
         titleTextId = R.string.app_name,
         route = HomeRoute::class,
-        baseRoute = HomeBaseRoute::class,
+        baseRoute = HomeGraph::class,
     ),
 
     BOOKMARK(
@@ -41,5 +42,6 @@ enum class TopLevelDestination(
         iconTextId = R.string.feature_tools,
         titleTextId = R.string.app_name,
         route = ToolsRoute::class,
+        baseRoute = ToolsGraph::class,
     ),
 }

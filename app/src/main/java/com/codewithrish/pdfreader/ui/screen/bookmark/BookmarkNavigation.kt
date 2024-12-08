@@ -12,9 +12,7 @@ import kotlinx.serialization.Serializable
 fun NavController.navigateToBookmarks(navOptions: NavOptions) =
     navigate(route = BookmarksRoute, navOptions)
 
-fun NavGraphBuilder.bookmarksScreen(
-
-) {
+fun NavGraphBuilder.bookmarksScreen() {
     composable<BookmarksRoute>() {
         Surface {
             BookmarksScreen()

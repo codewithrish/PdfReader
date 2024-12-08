@@ -2,6 +2,7 @@ package com.codewithrish.pdfreader.core.model.room
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.codewithrish.pdfreader.core.model.home.Document
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,3 +18,17 @@ data class DocumentEntity(
     val size: Long,
     val bookmarked: Boolean,
 )
+
+
+fun DocumentEntity.toDocument(): Document {
+    return Document(
+        id = id,
+        path = path,
+        uri = uri,
+        name = name,
+        dateTime = dateTime,
+        mimeType = mimeType,
+        size = size,
+        bookmarked = bookmarked
+    )
+}

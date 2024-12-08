@@ -9,17 +9,20 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.codewithrish.pdfreader.core.model.home.Document
+import com.codewithrish.pdfreader.core.model.room.DocumentEntity
+import com.codewithrish.pdfreader.ui.screen.document_viewer.documentScreen
 import kotlinx.serialization.Serializable
 
+@Serializable data object HomeGraph
 @Serializable data object HomeRoute
-@Serializable data object HomeBaseRoute
 
 fun NavController.navigateToHome(navOptions: NavOptions) = navigate(route = HomeRoute, navOptions = navOptions)
 
 fun NavGraphBuilder.homeSection(
-    onDocumentClick: (String) -> Unit,
+    onDocumentClick: (Document) -> Unit,
 ) {
-    navigation<HomeBaseRoute>(startDestination = HomeRoute) {
+    navigation<HomeGraph>(startDestination = HomeRoute) {
         composable<HomeRoute> {
             val homeViewModel: HomeViewModel = hiltViewModel()
             val homeUiState by homeViewModel.state.collectAsStateWithLifecycle()
@@ -30,12 +33,13 @@ fun NavGraphBuilder.homeSection(
                     state = homeUiState,
                     onEvent = { event ->
                         when (event) {
-                            is HomeUiEvent.OpenDocument -> onDocumentClick(event.documentJson)
+                            is HomeUiEvent.OpenDocument -> onDocumentClick(event.document)
                             is HomeUiEvent.OnDocumentsLoad -> homeUiEvent(event)
                         }
                     }
                 )
             }
         }
+        documentScreen()
     }
 }

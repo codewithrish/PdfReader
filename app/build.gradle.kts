@@ -8,9 +8,10 @@ plugins {
     alias(libs.plugins.protobuf)
     alias(libs.plugins.hilt) // Hilt plugin
     alias(libs.plugins.ksp) // KSP plugin
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -168,8 +169,13 @@ dependencies {
     // MixPanel
     implementation(libs.mixpanel.android)
 
+    // Gson
+    implementation(libs.gson)
+
+    // Google Fonts
+    implementation(libs.androidx.google.fonts)
+
     // Animated Navigation
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
-    implementation ("androidx.compose.animation:animation:1.7.5")
+//    implementation ("androidx.compose.animation:animation:1.7.5")
 
 }

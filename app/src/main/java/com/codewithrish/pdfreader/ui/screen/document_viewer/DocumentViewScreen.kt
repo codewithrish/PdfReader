@@ -14,12 +14,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,40 +28,42 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.model.room.DocumentEntity
 import com.codewithrish.pdfreader.core.ui.TrackScreenViewEvent
 import com.codewithrish.pdfreader.ui.screen.home.DocumentType
 import com.rizzi.bouquet.ResourceType
 import com.rizzi.bouquet.VerticalPDFReader
 import com.rizzi.bouquet.rememberVerticalPdfReaderState
-import kotlinx.serialization.json.Json
 
 @Composable
 fun PdfViewScreen(
-    documentJson: String
+    document: Document
 ) {
-    val documentEntity = Json.decodeFromString<DocumentEntity>(documentJson)
+//    val documentEntity = Json.decodeFromString<DocumentEntity>(documentJson)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        val pdfState = rememberVerticalPdfReaderState(
+            resource = ResourceType.Local (Uri.parse(document.uri)),
+            isZoomEnable = true
+        )
 
-    val pdfState = rememberVerticalPdfReaderState(
-        resource = ResourceType.Local (Uri.parse(documentEntity.uri)),
-        isZoomEnable = true
-    )
-
-    when (documentEntity.mimeType) {
-        DocumentType.PDF.name -> {
-            VerticalPDFReader(
-                state = pdfState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.White)
-            )
-        }
-        else  -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                ZoomBounceText()
+        when (document.mimeType) {
+            DocumentType.PDF.name -> {
+                VerticalPDFReader(
+                    state = pdfState,
+                    modifier = Modifier
+                )
+            }
+            else  -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ZoomBounceText()
+                }
             }
         }
     }
