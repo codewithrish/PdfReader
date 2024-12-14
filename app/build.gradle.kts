@@ -55,6 +55,11 @@ android {
     packaging {
         resources {
             excludes.add("google/protobuf/field_mask.proto")
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/NOTICE",
+                "META-INF/LICENSE"
+            )
         }
     }
 }
@@ -174,6 +179,11 @@ dependencies {
 
     // Google Fonts
     implementation(libs.androidx.google.fonts)
+
+    // Pdf Box
+//    implementation(libs.pdfbox)
+//    implementation(libs.fontbox)
+    implementation(libs.pdfbox.android)
 
     // Animated Navigation
 //    implementation ("androidx.compose.animation:animation:1.7.5")

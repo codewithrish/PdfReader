@@ -116,6 +116,7 @@ fun CwrNavigationSuiteScaffold(
     navigationSuiteItems: CwrNavigationSuiteScope.() -> Unit,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
+    isTopLevelDestination: Boolean,
     content: @Composable () -> Unit,
 ) {
     val layoutType = NavigationSuiteScaffoldDefaults

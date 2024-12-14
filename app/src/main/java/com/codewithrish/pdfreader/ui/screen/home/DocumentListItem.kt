@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,12 +40,13 @@ fun DocumentListItem(
 //                val jsonString = Json.encodeToString(DocumentEntity.serializer(), document)
                 onEvent(HomeUiEvent.OpenDocument(document))
                 Timber.tag("DocumentItem").d(document.toString())
-            }.
-        height(60.dp)
+            }
+            .wrapContentHeight()
+            .padding(16.dp)
     ) {
         Row(
             modifier = modifier,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -62,7 +64,7 @@ fun DocumentListItem(
                 ),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(35.dp)
             )
             Column(
                 verticalArrangement = Arrangement.SpaceEvenly,

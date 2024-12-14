@@ -4,10 +4,10 @@ import androidx.compose.material3.Surface
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.codewithrish.pdfreader.core.model.home.Document
-import com.codewithrish.pdfreader.navigation.serializer.createCustomNavType
+import com.codewithrish.pdfreader.navigation.serializer.genericNavType
+import com.codewithrish.pdfreader.navigation.wrapper.animatedComposable
 import kotlinx.serialization.Serializable
 import kotlin.reflect.typeOf
 
@@ -19,13 +19,13 @@ fun NavController.navigateToDocumentView(
 ) = navigate(route = DocumentViewRoute(document = document), navOptions)
 
 fun NavGraphBuilder.documentScreen() {
-    composable<DocumentViewRoute>(
-        typeMap = mapOf(typeOf<Document>() to createCustomNavType<Document>())
+    animatedComposable<DocumentViewRoute>(
+        typeMap = mapOf(typeOf<Document>() to genericNavType<Document>())
     ) { backStackEntry ->
 //        val documentJson = backStackEntry.arguments?.getString("documentJson") ?: ""
         val document = backStackEntry.toRoute<DocumentViewRoute>()
         Surface {
-            PdfViewScreen(document = document.document)
+            DocumentViewScreen(document = document.document)
         }
     }
 }

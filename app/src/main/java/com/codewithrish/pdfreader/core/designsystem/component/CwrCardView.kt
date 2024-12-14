@@ -1,5 +1,6 @@
 package com.codewithrish.pdfreader.core.designsystem.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -20,7 +21,7 @@ fun CwrCardView(
         containerColor = MaterialTheme.colorScheme.onSecondary,
     ),
     elevation: CardElevation = CardDefaults.cardElevation(),
-    padding: Dp = 16.dp,
+//    padding: Dp = 16.dp,
     shape: CornerBasedShape = MaterialTheme.shapes.large,
     content: @Composable () -> Unit,
 ) {
@@ -30,8 +31,7 @@ fun CwrCardView(
         elevation = elevation,
         shape = shape
     ) {
-        // Inner padding for the content
-        Box(modifier = Modifier.padding(padding)) {
+        Box(modifier = Modifier) {
             content()
         }
     }

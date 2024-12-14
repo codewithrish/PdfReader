@@ -72,14 +72,15 @@ fun CwrApp(
                             .then(Modifier),
                     )
                 }
-            } else null
+            }
         },
         windowAdaptiveInfo = windowAdaptiveInfo,
+        isTopLevelDestination = isTopLevelDestination,
     ) {
         Scaffold(
             modifier = modifier.semantics {
                 testTagsAsResourceId = true
-            },
+            }.fillMaxSize(),
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onBackground,
             contentWindowInsets = WindowInsets.statusBars,

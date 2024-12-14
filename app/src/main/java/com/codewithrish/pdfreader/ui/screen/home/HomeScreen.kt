@@ -10,7 +10,6 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -26,22 +25,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codewithrish.pdfreader.core.common.dialog.CwrPermissionRationaleDialog
 import com.codewithrish.pdfreader.core.model.room.toDocument
 import com.codewithrish.pdfreader.core.ui.TrackScreenViewEvent
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import timber.log.Timber
+import java.io.File
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -50,6 +54,30 @@ fun HomeScreen(
     onEvent: (HomeUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // Observe lifecycle events
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    Timber.tag("HomeScreen").d("ON_RESUME event triggered")
+                    onEvent(HomeUiEvent.OnDocumentsLoadInDb)
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                    Timber.tag("HomeScreen").d("ON_PAUSE event triggered")
+                }
+                else -> Unit
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     Scaffold (
         topBar = { HomeTopAppBar(
             modifier = Modifier.fillMaxWidth()
@@ -137,11 +165,19 @@ fun HomeScreen(
                 // UI
                 if (isPermissionGranted) {
                     state.documents.collectAsStateWithLifecycle(emptyList()).value.let { documents ->
-                        DocumentList(
-                            documents = documents.map { it.toDocument() }.filter { it.mimeType == DocumentType.PDF.name },
-                            onEvent = onEvent,
-                            modifier = Modifier
-                        )
+                        documents.forEach { document ->
+                            val file = File(document.path)
+                            Timber.tag("HomeScreen").d("File exists: ${document.path} ${file.exists()}")
+                            if (!file.exists()) {
+                                onEvent(HomeUiEvent.DeleteDocument(document.toDocument()))
+                            }
+                        }.also {
+                            DocumentList(
+                                documents = documents.map { it.toDocument() }.filter { it.mimeType == DocumentType.PDF.name },
+                                onEvent = onEvent,
+                                modifier = Modifier
+                            )
+                        }
                     }
                 } else {
                     Button(onClick = { handlePermissionRequest() }) {
@@ -202,3 +238,4 @@ fun HomeTopAppBar(
         )
     }
 }
+

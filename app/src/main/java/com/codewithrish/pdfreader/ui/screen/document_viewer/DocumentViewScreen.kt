@@ -9,12 +9,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,11 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.core.model.home.Document
-import com.codewithrish.pdfreader.core.model.room.DocumentEntity
 import com.codewithrish.pdfreader.core.ui.TrackScreenViewEvent
 import com.codewithrish.pdfreader.ui.screen.home.DocumentType
 import com.rizzi.bouquet.ResourceType
@@ -37,7 +33,7 @@ import com.rizzi.bouquet.VerticalPDFReader
 import com.rizzi.bouquet.rememberVerticalPdfReaderState
 
 @Composable
-fun PdfViewScreen(
+fun DocumentViewScreen(
     document: Document
 ) {
 //    val documentEntity = Json.decodeFromString<DocumentEntity>(documentJson)
