@@ -41,20 +41,20 @@ object AnimationTransition {
         }
 }
 
-object NoAnimationTransition {
-    private const val TRANSITION_DURATION = 0
+object BottomUpAnimationTransition {
+    private const val TRANSITION_DURATION = 350
 
     val enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition) =
         {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Up, // Bottom-to-Top
                 animationSpec = tween(TRANSITION_DURATION)
             )
         }
 
     val exitTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition) = {
         slideOutOfContainer(
-            towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+            towards = AnimatedContentTransitionScope.SlideDirection.Up, // Bottom-to-Top
             animationSpec = tween(TRANSITION_DURATION)
         )
     }
@@ -62,7 +62,7 @@ object NoAnimationTransition {
     val popEnterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition) =
         {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                towards = AnimatedContentTransitionScope.SlideDirection.Down, // Top-to-Bottom
                 animationSpec = tween(TRANSITION_DURATION)
             )
         }
@@ -70,7 +70,7 @@ object NoAnimationTransition {
     val popExitTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition) =
         {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                towards = AnimatedContentTransitionScope.SlideDirection.Down, // Top-to-Bottom
                 animationSpec = tween(TRANSITION_DURATION)
             )
         }

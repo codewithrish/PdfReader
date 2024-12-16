@@ -7,7 +7,6 @@ import javax.inject.Inject
 
 interface DocumentsRepository {
     fun getAllDocuments(): Flow<List<DocumentEntity>>
-    fun getBookmarkedDocuments(): Flow<List<DocumentEntity>>
     fun getDocumentsByMimeType(mimeType: String): Flow<List<DocumentEntity>>
     fun loadById(id: Long): Flow<List<DocumentEntity>>
     fun searchDocuments(searchQuery: String, mimeType: String): Flow<List<DocumentEntity>>
@@ -15,6 +14,9 @@ interface DocumentsRepository {
     suspend fun insertDocument(user: DocumentEntity)
     suspend fun updateBookmark(id: Long, bookmarked: Boolean)
     suspend fun delete(id: Long)
+    // Bookmark
+    fun getBookmarkedDocuments(): Flow<List<DocumentEntity>>
+    suspend fun updateBookmarkStatus(id: Long, isBookmarked: Boolean)
 }
 
 internal class DocumentsRepositoryImpl @Inject constructor(
@@ -22,10 +24,6 @@ internal class DocumentsRepositoryImpl @Inject constructor(
 ) : DocumentsRepository {
     override fun getAllDocuments(): Flow<List<DocumentEntity>> {
         return documentDao.getAllDocuments()
-    }
-
-    override fun getBookmarkedDocuments(): Flow<List<DocumentEntity>> {
-        return documentDao.getBookmarkedDocuments()
     }
 
     override fun getDocumentsByMimeType(mimeType: String): Flow<List<DocumentEntity>> {
@@ -57,6 +55,15 @@ internal class DocumentsRepositoryImpl @Inject constructor(
 
     override suspend fun delete(id: Long) {
         return documentDao.delete(id)
+    }
+
+    // Bookmark
+    override fun getBookmarkedDocuments(): Flow<List<DocumentEntity>> {
+        return documentDao.getBookmarkedDocuments()
+    }
+
+    override suspend fun updateBookmarkStatus(id: Long, isBookmarked: Boolean) {
+        return documentDao.updateBookmarkStatus(id, isBookmarked)
     }
 
 }

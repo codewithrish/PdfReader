@@ -1,80 +1,103 @@
 package com.codewithrish.pdfreader.ui.screen.tools
 
-import android.net.Uri
-import android.os.Environment
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.codewithrish.pdfreader.core.designsystem.component.CwrPreviews
+import com.codewithrish.pdfreader.R
 import com.codewithrish.pdfreader.core.ui.TrackScreenViewEvent
-import com.codewithrish.pdfreader.ui.helper.PdfUtils
 
+enum class ToolType {
+    SPLIT_PDF,
+    MERGE_PDF,
+}
+
+data class Tool(
+    val image: Int? = null,
+    val contentDescription: String? = null,
+    val imageSize: Dp = 60.dp,
+    val featureName: String,
+    val toolType: ToolType,
+    val modifier: Modifier = Modifier
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToolsScreen(modifier: Modifier = Modifier) {
+fun ToolsScreen(
+    state: ToolsUiState,
+    onEvent: (ToolsUiEvent) -> Unit,
+    onToolClick: (ToolType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val tools = listOf(
+        Tool(image = R.drawable.img_scissor, featureName = "Split Pdf", toolType = ToolType.SPLIT_PDF),
+        Tool(image = R.drawable.img_merge, featureName = "Merge Pdf", toolType = ToolType.MERGE_PDF),
+        Tool(image = R.drawable.img_img_to_pdf, featureName = "Image To Pdf", toolType = ToolType.MERGE_PDF),
+    )
 
-    val context = LocalContext.current
-    val downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
-
-    var inputPdfPath by remember { mutableStateOf("$downloadsFolder/MultiPage.pdf") }
-    var outputDirPath by remember { mutableStateOf("$downloadsFolder/SplitPdfs") }
-    var outputPdfPath by remember { mutableStateOf("$downloadsFolder/Merged.pdf") }
-    var pdfUris by remember { mutableStateOf(listOf<Uri>()) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        TextField(
-            value = inputPdfPath,
-            onValueChange = { inputPdfPath = it },
-            label = { Text("Input PDF Path") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-            onClick = {
-                val splitFiles = PdfUtils.splitPdf(context, inputPdfPath)
-                pdfUris = splitFiles // Save the Uris instead of File paths
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Split PDF")
+    Scaffold (
+        topBar = {
+            ToolsTopBar(modifier = Modifier.fillMaxWidth())
+        },
+        content = {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(it),
+            ) {
+                ToolsList(
+                    tools = tools,
+                    onToolClick = onToolClick,
+                    modifier = modifier
+                )
+                Box (
+                    modifier = modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "More Tools Coming Soon...")
+                }
+            }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = outputPdfPath,
-            onValueChange = { outputPdfPath = it },
-            label = { Text("Output Merged PDF Path") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-            onClick = {
-                PdfUtils.mergePdfs(context, pdfUris, outputPdfPath)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Merge PDFs")
-        }
-    }
+    )
     TrackScreenViewEvent(screenName = "Tools Screen")
 }
 
-@CwrPreviews
 @Composable
-fun ToolsScreenPreview() {
-    ToolsScreen()
+fun ToolsTopBar(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .height(56.dp).padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Image(
+            imageVector = Icons.Default.Search,
+            contentDescription = "",
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+        )
+        Text(
+            text = "Tools",
+            style = MaterialTheme.typography.titleLarge
+        )
+        Image(
+            imageVector = Icons.Default.Settings,
+            contentDescription = "",
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+        )
+    }
 }
-

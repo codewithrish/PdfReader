@@ -22,3 +22,22 @@ inline fun <reified T : Parcelable> genericNavType(
 
     override fun parseValue(value: String): T = gson.fromJson(value, T::class.java)
 }
+
+inline fun <reified T : Enum<T>> enumNavType(): NavType<T> = object : NavType<T>(false) {
+    override fun get(bundle: Bundle, key: String): T? {
+        val value = bundle.getString(key)
+        return value?.let { enumValueOf<T>(it) }
+    }
+
+    override fun put(bundle: Bundle, key: String, value: T) {
+        bundle.putString(key, value.name)
+    }
+
+    override fun parseValue(value: String): T {
+        return enumValueOf(value)
+    }
+
+    override fun serializeAsValue(value: T): String {
+        return value.name
+    }
+}

@@ -30,7 +30,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -184,6 +185,9 @@ dependencies {
 //    implementation(libs.pdfbox)
 //    implementation(libs.fontbox)
     implementation(libs.pdfbox.android)
+
+    implementation("com.airbnb.android:lottie-compose:6.0.1")
+
 
     // Animated Navigation
 //    implementation ("androidx.compose.animation:animation:1.7.5")

@@ -9,6 +9,11 @@ import com.codewithrish.pdfreader.ui.screen.home.HomeGraph
 import com.codewithrish.pdfreader.ui.screen.home.homeSection
 import com.codewithrish.pdfreader.ui.screen.document_viewer.navigateToDocumentView
 import com.codewithrish.pdfreader.ui.screen.document_viewer.documentScreen
+import com.codewithrish.pdfreader.ui.screen.tools.ToolType
+import com.codewithrish.pdfreader.ui.screen.tools.merge_pdf.mergePdfScreen
+import com.codewithrish.pdfreader.ui.screen.tools.merge_pdf.navigateToMergePdf
+import com.codewithrish.pdfreader.ui.screen.tools.split_pdf.navigateToSplitPdf
+import com.codewithrish.pdfreader.ui.screen.tools.split_pdf.splitPdfScreen
 import com.codewithrish.pdfreader.ui.screen.tools.toolsSection
 
 @Composable
@@ -27,9 +32,23 @@ fun CwrNavHost(
                 navController.navigateToDocumentView(document = document)
             }
         )
-        bookmarksScreen()
-        toolsSection()
-
+        bookmarksScreen(
+            onDocumentClick = { document ->
+                navController.navigateToDocumentView(document = document)
+            }
+        )
+        toolsSection(
+            onToolClick = { toolType ->
+                when (toolType) {
+                    ToolType.SPLIT_PDF -> navController.navigateToSplitPdf()
+                    ToolType.MERGE_PDF -> navController.navigateToMergePdf()
+                    else -> {}
+                }
+            }
+        )
         documentScreen()
+        // Tools Screen
+        splitPdfScreen()
+        mergePdfScreen()
     }
 }

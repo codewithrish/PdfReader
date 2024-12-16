@@ -41,8 +41,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codewithrish.pdfreader.core.common.dialog.CwrPermissionRationaleDialog
+import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.model.room.toDocument
 import com.codewithrish.pdfreader.core.ui.TrackScreenViewEvent
+import com.codewithrish.pdfreader.ui.components.LoadingScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import timber.log.Timber
 import java.io.File
@@ -52,6 +54,7 @@ import java.io.File
 fun HomeScreen(
     state: HomeUiState,
     onEvent: (HomeUiEvent) -> Unit,
+    onDocumentClick: (Document) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -61,11 +64,8 @@ fun HomeScreen(
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    Timber.tag("HomeScreen").d("ON_RESUME event triggered")
                     onEvent(HomeUiEvent.OnDocumentsLoadInDb)
-                }
-                Lifecycle.Event.ON_PAUSE -> {
-                    Timber.tag("HomeScreen").d("ON_PAUSE event triggered")
+                    onEvent(HomeUiEvent.OnDocumentsLoad)
                 }
                 else -> Unit
             }
@@ -79,9 +79,11 @@ fun HomeScreen(
     }
 
     Scaffold (
-        topBar = { HomeTopAppBar(
-            modifier = Modifier.fillMaxWidth()
-        ) },
+        topBar = {
+            HomeTopBar(
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
         content = {
             Box(
                 modifier = modifier
@@ -165,18 +167,27 @@ fun HomeScreen(
                 // UI
                 if (isPermissionGranted) {
                     state.documents.collectAsStateWithLifecycle(emptyList()).value.let { documents ->
-                        documents.forEach { document ->
-                            val file = File(document.path)
-                            Timber.tag("HomeScreen").d("File exists: ${document.path} ${file.exists()}")
-                            if (!file.exists()) {
-                                onEvent(HomeUiEvent.DeleteDocument(document.toDocument()))
+                        if (documents.isNotEmpty()) {
+                            documents.forEach { document ->
+                                val file = File(document.path)
+                                Timber.tag("HomeScreen")
+                                    .d("File exists: ${document.path} ${file.exists()}")
+                                if (!file.exists()) {
+                                    onEvent(HomeUiEvent.DeleteDocument(document.toDocument()))
+                                }
+                            }.also {
+                                DocumentList(
+                                    documents = documents.map { it.toDocument() }
+                                        .filter { it.mimeType == DocumentType.PDF.name },
+                                    onDocumentClick = onDocumentClick,
+                                    onBookmarkClick = { id, isBookmarked ->
+                                        onEvent(HomeUiEvent.OnBookmarkClick(id, isBookmarked))
+                                    },
+                                    modifier = Modifier
+                                )
                             }
-                        }.also {
-                            DocumentList(
-                                documents = documents.map { it.toDocument() }.filter { it.mimeType == DocumentType.PDF.name },
-                                onEvent = onEvent,
-                                modifier = Modifier
-                            )
+                        } else {
+                            LoadingScreen()
                         }
                     }
                 } else {
@@ -213,7 +224,7 @@ fun checkPermission(context: Context, permission: String): Boolean {
 }
 
 @Composable
-fun HomeTopAppBar(
+fun HomeTopBar(
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -228,7 +239,7 @@ fun HomeTopAppBar(
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
         )
         Text(
-            text = "Pdf Reader",
+            text = "Open Pdf",
             style = MaterialTheme.typography.titleLarge
         )
         Image(
