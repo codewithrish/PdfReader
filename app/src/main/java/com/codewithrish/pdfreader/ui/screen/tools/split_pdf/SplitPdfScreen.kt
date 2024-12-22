@@ -27,7 +27,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.R
 import com.codewithrish.pdfreader.core.designsystem.component.CwrCardView
+import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.ui.components.DocumentDetails
 import com.codewithrish.pdfreader.ui.components.LoadingScreen
@@ -51,6 +51,7 @@ import com.codewithrish.pdfreader.ui.components.PdfPagesGrid
 import com.codewithrish.pdfreader.ui.components.EmptyScreenWithText
 import com.codewithrish.pdfreader.ui.helper.PdfUtils
 import com.codewithrish.pdfreader.ui.helper.SplitPdfResult
+import com.codewithrish.pdfreader.ui.theme.titleLargeTextStyle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -119,7 +120,7 @@ fun SplitPdfScreen(
                         pickPdfLauncher.launch("application/pdf")
                     }
                 ) {
-                    Text("Pick a PDF File")
+                    CwrText("Pick a PDF File")
                 }
 
                 if (selectedFileUri != null) {
@@ -171,7 +172,7 @@ fun SplitPdfScreen(
                                 .padding(horizontal = 16.dp)
                                 .size(24.dp)
                         )
-                        Text(text = "Split Selected Pages")
+                        CwrText(text = "Split Selected Pages")
                     }
                 }
                 Row(
@@ -180,7 +181,7 @@ fun SplitPdfScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
+                    CwrText(
                         text = "PDF Pages (Selected ${selectedItems.size})",
                         modifier = Modifier.padding(16.dp)
                     )
@@ -217,9 +218,9 @@ fun SplitPdfScreen(
                 LoadingScreen()
             }
             SplitPdfState.SUCCESS -> {
-                Text(
+                CwrText(
                     text = "Extracted Pdfs",
-                    fontStyle = MaterialTheme.typography.titleLarge.fontStyle,
+                    style = titleLargeTextStyle(),
                     modifier = modifier.fillMaxWidth().padding(16.dp)
                 )
                 OutlinedButton(
@@ -238,7 +239,7 @@ fun SplitPdfScreen(
                             .size(24.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
-                    Text(text = "Visit Files Location")
+                    CwrText(text = "Visit Files Location")
                 }
                 LazyColumn(
                     contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 12.dp),

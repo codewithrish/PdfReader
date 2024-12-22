@@ -23,17 +23,23 @@ import com.codewithrish.pdfreader.MainUiState.Success
 import com.codewithrish.pdfreader.core.analytics.AnalyticsHelper
 import com.codewithrish.pdfreader.core.analytics.LocalAnalyticsHelper
 import com.codewithrish.pdfreader.core.data.util.TimeZoneMonitor
-import com.codewithrish.pdfreader.core.ui.LocalTimeZone
 import com.codewithrish.pdfreader.core.model.DarkThemeConfig
 import com.codewithrish.pdfreader.core.model.ThemeBrand
+import com.codewithrish.pdfreader.core.ui.LocalTimeZone
 import com.codewithrish.pdfreader.ui.CwrApp
+import com.codewithrish.pdfreader.ui.permission.StoragePermissionManager
 import com.codewithrish.pdfreader.ui.rememberCwrAppState
 import com.codewithrish.pdfreader.ui.theme.PdfReaderTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
+
+/**
+ * [MainViewModel]
+ */
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -105,7 +111,19 @@ class MainActivity : ComponentActivity() {
                     androidTheme = shouldUseAndroidTheme(uiState),
                     disableDynamicTheming = shouldDisableDynamicTheming(uiState),
                 ) {
-                    CwrApp(appState)
+                    StoragePermissionManager(
+                        onPermissionGranted = {
+                            viewModel.documentsState.collectAsStateWithLifecycle().value?.let { documents ->
+                                documents.forEach { document ->
+                                    val file = File(document.path)
+                                    if (!file.exists()) {
+                                        viewModel.deleteDocument(document)
+                                    }
+                                }
+                            }
+                            CwrApp(appState)
+                        }
+                    )
                 }
             }
         }

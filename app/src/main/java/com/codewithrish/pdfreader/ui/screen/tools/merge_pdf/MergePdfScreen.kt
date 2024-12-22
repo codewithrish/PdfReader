@@ -7,7 +7,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -25,7 +24,6 @@ import androidx.compose.material.icons.filled.Dehaze
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -45,8 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.codewithrish.pdfreader.core.common.util.DataUnitConverter
+import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.ui.helper.PdfUtils
+import com.codewithrish.pdfreader.ui.theme.bodySmallTextStyle
+import com.codewithrish.pdfreader.ui.theme.labelLargeTextStyle
 import org.joda.time.DateTime
 
 @Composable
@@ -80,7 +81,7 @@ fun MergePdfScreen(
                 pickPdfsLauncher.launch(arrayOf("application/pdf"))
             }
         ) {
-            Text("Select Multiple Files")
+            CwrText("Select Multiple Files")
         }
 
         if (selectedPdfDocuments.isNotEmpty()) {
@@ -136,7 +137,7 @@ fun MyList() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            Text(text = "Title 1", fontSize = 30.sp)
+            CwrText(text = "Title 1", fontSize = 30.sp)
         }
 
         itemsIndexed(
@@ -159,7 +160,7 @@ fun MyList() {
         }
 
         item {
-            Text(text = "Title 2", fontSize = 30.sp)
+            CwrText(text = "Title 2", fontSize = 30.sp)
         }
 
         itemsIndexed(list2, key = { _, item -> item }) { _, item ->
@@ -175,7 +176,7 @@ private fun Item(modifier: Modifier = Modifier, index: Int) {
     Card(
         modifier = modifier
     ) {
-        Text(
+        CwrText(
             "Item $index",
             modifier = Modifier
                 .fillMaxWidth()
@@ -214,17 +215,13 @@ private fun MergeFileItem(
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            Text(
+            CwrText(
                 text = document.name,
-                fontSize = MaterialTheme.typography.labelLarge.fontSize,
-                fontWeight = MaterialTheme.typography.labelLarge.fontWeight,
-                fontFamily = MaterialTheme.typography.labelLarge.fontFamily,
+                style = labelLargeTextStyle(),
             )
-            Text(
+            CwrText(
                 text = "PDF . ${DateTime(document.dateTime).toString("dd MMM yyyy")} . ${DataUnitConverter.formatDataSize(document.size)}",
-                fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
-                fontFamily = MaterialTheme.typography.bodySmall.fontFamily,
+                style = bodySmallTextStyle(),
             )
         }
         // Draggable Handle

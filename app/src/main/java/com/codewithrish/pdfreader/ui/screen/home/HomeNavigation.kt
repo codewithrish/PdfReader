@@ -19,6 +19,7 @@ fun NavController.navigateToHome(navOptions: NavOptions) = navigate(route = Home
 
 fun NavGraphBuilder.homeSection(
     onDocumentClick: (Document) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     navigation<HomeGraph>(startDestination = HomeRoute) {
         composable<HomeRoute> {
@@ -31,6 +32,7 @@ fun NavGraphBuilder.homeSection(
                     state = homeUiState,
                     onEvent = homeUiEvent,
                     onDocumentClick = onDocumentClick,
+                    onSettingsClick = onSettingsClick
                 )
             }
         }

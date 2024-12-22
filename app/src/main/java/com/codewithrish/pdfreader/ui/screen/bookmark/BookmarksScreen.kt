@@ -2,9 +2,7 @@ package com.codewithrish.pdfreader.ui.screen.bookmark
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,26 +11,37 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
+import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.model.home.Document
-import com.codewithrish.pdfreader.core.model.room.toDocument
 import com.codewithrish.pdfreader.core.ui.TrackScreenViewEvent
+import com.codewithrish.pdfreader.ui.components.EmptyScreenWithText
 import com.codewithrish.pdfreader.ui.components.LoadingScreen
 import com.codewithrish.pdfreader.ui.screen.home.DocumentList
 import com.codewithrish.pdfreader.ui.screen.home.DocumentType
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
+
+/**
+ * [BookmarksViewModel]
+ */
 
 @Composable
 fun BookmarksScreen(
@@ -63,49 +72,44 @@ fun BookmarksScreen(
         }
     }
 
+    var showEmptyScreen by remember { mutableStateOf(false) }
+
     Scaffold (
-        topBar = {
-            BookMarksTopBar(modifier = Modifier.fillMaxWidth())
-        },
-        content = {
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(it),
-                contentAlignment = Alignment.Center
-            ) {
-                state.documents.collectAsStateWithLifecycle(emptyList()).value.let { documents ->
-                    if (documents.isNotEmpty()) {
-                        documents.forEach { document ->
-                            val file = File(document.path)
-                            Timber.tag("HomeScreen")
-                                .d("File exists: ${document.path} ${file.exists()}")
-                            if (!file.exists()) {
-                                onEvent(BookmarksUiEvent.DeleteDocument(document.toDocument()))
+        topBar = { BookMarksTopBar(modifier = Modifier.fillMaxWidth()) },
+        content = { paddingValues ->
+            CwrContentBox(paddingValues = paddingValues) {
+                if (state.isLoading) {
+                    LoadingScreen()
+                }
+                if (!state.isLoading) {
+                    state.documents.collectAsStateWithLifecycle(emptyList()).value.let { documents ->
+                        if (documents.isNotEmpty()) {
+                            documents.forEach { document ->
+                                val file = File(document.path)
+                                Timber.tag("HomeScreen")
+                                    .d("File exists: ${document.path} ${file.exists()}")
+                                if (!file.exists()) {
+                                    onEvent(BookmarksUiEvent.DeleteDocument(document))
+                                }
+                            }.also {
+                                DocumentList(
+                                    documents = documents
+                                        .filter { it.mimeType == DocumentType.PDF.name },
+                                    onDocumentClick = onDocumentClick,
+                                    onBookmarkClick = { id, isBookmarked ->
+                                        onEvent(BookmarksUiEvent.OnBookmarkClick(id, isBookmarked))
+                                    },
+                                    modifier = Modifier
+                                )
                             }
-                        }.also {
-                            DocumentList(
-                                documents = documents.map { it.toDocument() }
-                                    .filter { it.mimeType == DocumentType.PDF.name },
-                                onDocumentClick = onDocumentClick,
-                                onBookmarkClick = { id, isBookmarked ->
-                                    onEvent(BookmarksUiEvent.OnBookmarkClick(id, isBookmarked))
-                                },
-                                modifier = Modifier
-                            )
-                        }
-                    } else {
-//                        LoadingScreen()
-                        Box(
-                            modifier = modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "No Bookmarks Found",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 32.sp,
-                            )
+                        } else {
+                            lifecycleOwner.lifecycleScope.launch {
+                                delay(300)
+                                showEmptyScreen = true
+                            }
+                            if (showEmptyScreen) {
+                                EmptyScreenWithText("No Bookmarks Found")
+                            }
                         }
                     }
                 }
@@ -128,7 +132,7 @@ fun BookMarksTopBar(modifier: Modifier = Modifier) {
             contentDescription = "",
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
         )
-        Text(
+        CwrText(
             text = "Bookmarks",
             style = MaterialTheme.typography.titleLarge
         )

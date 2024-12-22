@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.BookmarkAdded
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +22,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.R
 import com.codewithrish.pdfreader.core.common.util.DataUnitConverter
+import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.ui.screen.home.DocumentType
+import com.codewithrish.pdfreader.ui.theme.labelLargeTextStyle
+import com.codewithrish.pdfreader.ui.theme.labelMediumTextStyle
 import org.joda.time.DateTime
 import timber.log.Timber
 
@@ -72,19 +74,15 @@ fun DocumentDetails(
                 horizontalAlignment = Alignment.Start,   // Align text to start
                 modifier = Modifier.weight(1f)           // Use remaining space
             ) {
-                Text(
+                CwrText(
                     text = document.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontSize = MaterialTheme.typography.labelLarge.fontSize,
-                    fontWeight = MaterialTheme.typography.labelLarge.fontWeight,
-                    fontFamily = MaterialTheme.typography.labelLarge.fontFamily,
+                    style = labelLargeTextStyle(),
                 )
-                Text(
+                CwrText(
                     text = "${DataUnitConverter.formatDataSize(document.size)}  |  ${DateTime(document.dateTime).toString("dd MMM yyyy")}  |  $noOfPages",
-                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                    fontWeight = MaterialTheme.typography.labelMedium.fontWeight,
-                    fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
+                    style = labelMediumTextStyle(),
                 )
             }
             Icon(

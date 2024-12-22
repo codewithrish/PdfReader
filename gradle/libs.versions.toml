@@ -11,7 +11,7 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 #Proto Buff
-protobuf = "4.26.1"
+protobuf = "4.28.2"
 protobuf-plugin = "0.9.4"
 #Navigation
 navigationCompose = "2.8.5"
@@ -26,6 +26,7 @@ ksp = "2.1.0-1.0.29"
 androidxDataStore = "1.1.1"
 #Pdf Viewer
 bouquet = "1.1.2"
+pdf-viewer-v = "3.2.0-beta.3"
 #Splash Screen
 androidxCoreSplashscreen = "1.0.1"
 #Serialization
@@ -37,7 +38,7 @@ kotlinxDatetime = "0.6.1"
 androidxComposeRuntimeTracing = "1.7.6"
 androidxTracing = "1.3.0-alpha02"
 #Permissions
-accompanist = "0.34.0"
+accompanist = "0.36.0"
 #Timber Logging
 roomRuntime = "2.6.1"
 timber = "5.0.1"
@@ -55,6 +56,10 @@ googleFonts = "1.7.6"
 #Pdf Box
 pdfbox = "2.0.29"
 pdfboxAndroid = "2.0.27.0"
+#Lottie
+lottieCompose = "6.0.1"
+#Coil
+coilCompose = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -102,6 +107,7 @@ androidx-dataStore = { group = "androidx.datastore", name = "datastore", version
 
 #Pdf Viewer
 bouquet = { module = "io.github.grizzi91:bouquet", version.ref = "bouquet" }
+pdf-viewer = { group = "com.github.mhiew", name="android-pdf-viewer", version.ref="pdf-viewer-v" }
 
 #Time Zone
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
@@ -145,6 +151,12 @@ androidx-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", v
 pdfbox-android = { module = "com.tom-roush:pdfbox-android", version.ref = "pdfboxAndroid" }
 #pdfbox = { module = "org.apache.pdfbox:pdfbox", version.ref = "pdfbox" }
 #fontbox = { module = "org.apache.pdfbox:fontbox", version.ref = "pdfbox" }
+
+#Lottie
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
+
+#Coil
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

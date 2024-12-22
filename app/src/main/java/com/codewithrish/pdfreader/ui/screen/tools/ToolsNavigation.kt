@@ -9,10 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.codewithrish.pdfreader.navigation.serializer.enumNavType
-import com.codewithrish.pdfreader.navigation.serializer.genericNavType
 import kotlinx.serialization.Serializable
-import kotlin.reflect.typeOf
 
 @Serializable data object ToolsGraph
 @Serializable data object ToolsRoute
@@ -32,11 +29,7 @@ fun NavGraphBuilder.toolsSection(
             Surface {
                 ToolsScreen(
                     state = toolsUiState,
-                    onEvent = { event ->
-                        when (event) {
-                            is ToolsUiEvent.OnToolsClick -> toolsUiEvent(event)
-                        }
-                    },
+                    onEvent = toolsUiEvent,
                     onToolClick = onToolClick
                 )
             }

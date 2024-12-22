@@ -14,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +23,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codewithrish.pdfreader.core.designsystem.component.CwrCardView
+import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 
 @Composable
 fun PdfPagesGrid(
@@ -86,7 +86,7 @@ fun PdfPageItem(
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
             )
-            Text(
+            CwrText(
                 text = "${if (pageNumber < 10) "0$pageNumber" else pageNumber}",
                 fontSize = if (pageNumber < 100) 80.sp else 60.sp,
                 color = selectedColor,

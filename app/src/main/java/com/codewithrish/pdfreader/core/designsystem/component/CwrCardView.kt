@@ -1,7 +1,7 @@
 package com.codewithrish.pdfreader.core.designsystem.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -21,14 +21,17 @@ fun CwrCardView(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
     ),
     elevation: CardElevation = CardDefaults.cardElevation(),
-//    padding: Dp = 16.dp,
+    onClick: () -> Unit = {},
     shape: CornerBasedShape = MaterialTheme.shapes.large,
     borderColor: Color = MaterialTheme.colorScheme.outlineVariant,  // Added border color
     borderWidth: Dp = 1.dp,           // Added border width
     content: @Composable () -> Unit,
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier
+            .clickable {
+                onClick()
+            },
         colors = colors,
         elevation = elevation,
         shape = shape,

@@ -19,11 +19,14 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.R
+import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
+import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.ui.TrackScreenViewEvent
 
 enum class ToolType {
     SPLIT_PDF,
     MERGE_PDF,
+    IMAGE_TO_PDF
 }
 
 data class Tool(
@@ -46,19 +49,15 @@ fun ToolsScreen(
     val tools = listOf(
         Tool(image = R.drawable.img_scissor, featureName = "Split Pdf", toolType = ToolType.SPLIT_PDF),
         Tool(image = R.drawable.img_merge, featureName = "Merge Pdf", toolType = ToolType.MERGE_PDF),
-        Tool(image = R.drawable.img_img_to_pdf, featureName = "Image To Pdf", toolType = ToolType.MERGE_PDF),
+        Tool(image = R.drawable.img_img_to_pdf, featureName = "Image To Pdf", toolType = ToolType.IMAGE_TO_PDF),
     )
 
     Scaffold (
         topBar = {
             ToolsTopBar(modifier = Modifier.fillMaxWidth())
         },
-        content = {
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(it),
-            ) {
+        content = { paddingValues ->
+            CwrContentBox(paddingValues = paddingValues) {
                 ToolsList(
                     tools = tools,
                     onToolClick = onToolClick,
@@ -69,7 +68,7 @@ fun ToolsScreen(
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "More Tools Coming Soon...")
+                    CwrText(text = "More Tools Coming Soon...")
                 }
             }
         }
@@ -90,7 +89,7 @@ fun ToolsTopBar(modifier: Modifier = Modifier) {
             contentDescription = "",
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
         )
-        Text(
+        CwrText(
             text = "Tools",
             style = MaterialTheme.typography.titleLarge
         )

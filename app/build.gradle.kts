@@ -136,7 +136,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     // Pdf Viewer
-    implementation(libs.bouquet)
+//    implementation(libs.bouquet)
+    implementation(libs.pdf.viewer)
 
     // Adaptive
     implementation(libs.androidx.compose.material3.navigationSuite)
@@ -182,11 +183,13 @@ dependencies {
     implementation(libs.androidx.google.fonts)
 
     // Pdf Box
-//    implementation(libs.pdfbox)
-//    implementation(libs.fontbox)
     implementation(libs.pdfbox.android)
 
-    implementation("com.airbnb.android:lottie-compose:6.0.1")
+    // Lottie
+    implementation(libs.lottie.compose)
+
+    // Coil
+    implementation(libs.coil.compose)
 
 
     // Animated Navigation

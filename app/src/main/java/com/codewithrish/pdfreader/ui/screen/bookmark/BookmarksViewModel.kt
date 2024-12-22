@@ -7,11 +7,17 @@ import com.codewithrish.pdfreader.core.domain.usecase.DeleteDocumentUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.GetBookmarkedDocumentsUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.UpdateBookmarkStatusUseCase
 import com.codewithrish.pdfreader.core.model.home.Document
+import com.codewithrish.pdfreader.core.model.room.toDocument
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+
+/**
+ * [BookmarksScreen]
+ */
 
 @HiltViewModel
 class BookmarksViewModel @Inject constructor(
@@ -42,19 +48,30 @@ class BookmarksViewModel @Inject constructor(
 
     private fun getBookmarkedDocuments() {
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
             getBookmarkedDocumentsUseCase().collectLatest { result ->
                 when (result) {
                     is DbResultState.Error -> updateState {
-                        it.copy(errorMessage = Pair(it.errorMessage.first, result.error))
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = Pair(it.errorMessage.first, result.error)
+                        )
                     }
                     is DbResultState.Idle -> updateState {
-                        BookmarksUiState() // Reset to default state
+                        BookmarksUiState()
                     }
                     is DbResultState.Loading -> updateState {
                         it.copy(isLoading = true)
                     }
                     is DbResultState.Success -> updateState {
-                        it.copy(documents = result.data)
+                        it.copy(
+                            documents = result.data.map { documentEntities ->
+                                documentEntities.map { documentEntity ->
+                                    documentEntity.toDocument()
+                                }
+                            },
+                            isLoading = false,
+                        )
                     }
                 }
             }

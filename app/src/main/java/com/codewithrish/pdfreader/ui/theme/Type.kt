@@ -1,6 +1,8 @@
 package com.codewithrish.pdfreader.ui.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
@@ -96,6 +98,51 @@ val Typography = Typography(
     labelMedium = baseline.labelMedium.copy(fontFamily = labelMediumFontFamily),
     labelSmall = baseline.labelSmall.copy(fontFamily = labelSmallFontFamily),
 )
+
+@Composable
+fun displayLargeTextStyle() = MaterialTheme.typography.displayLarge
+
+@Composable
+fun displayMediumTextStyle() = MaterialTheme.typography.displayMedium
+
+@Composable
+fun displaySmallTextStyle() = MaterialTheme.typography.displaySmall
+
+@Composable
+fun headlineLargeTextStyle() = MaterialTheme.typography.headlineLarge
+
+@Composable
+fun headlineMediumTextStyle() = MaterialTheme.typography.headlineMedium
+
+@Composable
+fun headlineSmallTextStyle() = MaterialTheme.typography.headlineSmall
+
+@Composable
+fun titleLargeTextStyle() = MaterialTheme.typography.titleLarge
+
+@Composable
+fun titleMediumTextStyle() = MaterialTheme.typography.titleMedium
+
+@Composable
+fun titleSmallTextStyle() = MaterialTheme.typography.titleSmall
+
+@Composable
+fun bodyLargeTextStyle() = MaterialTheme.typography.bodyLarge
+
+@Composable
+fun bodyMediumTextStyle() = MaterialTheme.typography.bodyMedium
+
+@Composable
+fun bodySmallTextStyle() = MaterialTheme.typography.bodySmall
+
+@Composable
+fun labelLargeTextStyle() = MaterialTheme.typography.labelLarge
+
+@Composable
+fun labelMediumTextStyle() = MaterialTheme.typography.labelMedium
+
+@Composable
+fun labelSmallTextStyle() = MaterialTheme.typography.labelSmall
 
 //Typography Style	Default Font Size	Line Height	Weight
 //Display Large	57.sp	64.sp	Normal (400)

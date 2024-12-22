@@ -11,7 +11,6 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemDefaults
-import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
@@ -232,7 +231,7 @@ fun CwrNavigationBarPreview() {
                             contentDescription = item,
                         )
                     },
-                    label = { Text(item) },
+                    label = { CwrText(item) },
                     selected = index == 0,
                     onClick = { },
                 )
@@ -272,7 +271,7 @@ fun CwrNavigationRailPreview() {
                             contentDescription = item,
                         )
                     },
-                    label = { Text(item) },
+                    label = { CwrText(item) },
                     selected = index == 0,
                     onClick = { },
                 )

@@ -3,13 +3,15 @@ package com.codewithrish.pdfreader.ui.screen.home
 import androidx.lifecycle.viewModelScope
 import com.codewithrish.pdfreader.core.common.BaseViewModel
 import com.codewithrish.pdfreader.core.common.network.DbResultState
-import com.codewithrish.pdfreader.core.data.repository.LoadFilesRepository
 import com.codewithrish.pdfreader.core.domain.usecase.DeleteDocumentUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.GetAllDocumentsUseCase
+import com.codewithrish.pdfreader.core.domain.usecase.LoadFilesToDbUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.UpdateBookmarkStatusUseCase
 import com.codewithrish.pdfreader.core.model.home.Document
+import com.codewithrish.pdfreader.core.model.room.toDocument
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,7 +21,7 @@ class HomeViewModel @Inject constructor(
     private val getAllDocumentsUseCase: GetAllDocumentsUseCase,
     private val deleteDocumentUseCase: DeleteDocumentUseCase,
     private val updateBookmarkStatusUseCase: UpdateBookmarkStatusUseCase,
-    private val loadFilesRepository: LoadFilesRepository
+    private val loadFilesUseCase: LoadFilesToDbUseCase
 ) : BaseViewModel<HomeUiState, HomeUiEvent>() {
 
     override fun initState(): HomeUiState = HomeUiState()
@@ -72,7 +74,16 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadFiles() = viewModelScope.launch {
-        loadFilesRepository.loadAllFilesToDatabase()
+        loadFilesUseCase().collectLatest { result ->
+            when (result) {
+                is DbResultState.Error -> updateState {
+                    it.copy(errorMessage = Pair(it.errorMessage.first, result.error))
+                }
+                DbResultState.Idle -> {}
+                DbResultState.Loading -> {}
+                is DbResultState.Success -> {}
+            }
+        }
     }
 
     private fun deleteDocument(document: Document) {
@@ -92,19 +103,30 @@ class HomeViewModel @Inject constructor(
 
     private fun getAllDocuments() {
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
             getAllDocumentsUseCase().collectLatest { result ->
                 when (result) {
                     is DbResultState.Error -> updateState {
-                        it.copy(errorMessage = Pair(it.errorMessage.first, result.error))
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = Pair(it.errorMessage.first, result.error)
+                        )
                     }
                     is DbResultState.Idle -> updateState {
-                        HomeUiState() // Reset to default state
+                        HomeUiState(isLoading = false)
                     }
                     is DbResultState.Loading -> updateState {
                         it.copy(isLoading = true)
                     }
                     is DbResultState.Success -> updateState {
-                        it.copy(documents = result.data)
+                        it.copy(
+                            documents = result.data.map { documentEntities ->
+                                documentEntities.map { documentEntity ->
+                                    documentEntity.toDocument()
+                                }
+                            },
+                            isLoading = false,
+                        )
                     }
                 }
             }
