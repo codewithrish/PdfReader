@@ -113,14 +113,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     StoragePermissionManager(
                         onPermissionGranted = {
-                            viewModel.documentsState.collectAsStateWithLifecycle().value?.let { documents ->
-                                documents.forEach { document ->
-                                    val file = File(document.path)
-                                    if (!file.exists()) {
-                                        viewModel.deleteDocument(document)
-                                    }
-                                }
-                            }
                             CwrApp(appState)
                         }
                     )

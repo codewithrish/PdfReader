@@ -3,7 +3,6 @@ package com.codewithrish.pdfreader.core.designsystem.component
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -23,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.ui.theme.PdfReaderTheme
+import com.codewithrish.pdfreader.ui.theme.materialColor
+import com.codewithrish.pdfreader.ui.theme.pdfRedColor
 
 @Composable
 fun RowScope.CwrNavigationBarItem(
@@ -151,10 +152,10 @@ fun CwrNavigationSuiteScaffold(
                 ).run(navigationSuiteItems)
             },
             layoutType = layoutType,
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = materialColor().surface,
             navigationSuiteColors = NavigationSuiteDefaults.colors(
                 navigationBarContentColor = CwrNavigationDefaults.navigationContentColor(),
-                navigationRailContainerColor = MaterialTheme.colorScheme.surface,
+                navigationRailContainerColor = materialColor().surface,
             ),
             modifier = modifier,
         ) {
@@ -190,14 +191,23 @@ class CwrNavigationSuiteScope internal constructor(
 }
 
 object CwrNavigationDefaults {
-    @Composable
-    fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
+//    @Composable
+//    fun navigationContentColor() = materialColor().onSurfaceVariant
+//
+//    @Composable
+//    fun navigationSelectedItemColor() = materialColor().onPrimaryContainer
+//
+//    @Composable
+//    fun navigationIndicatorColor() = materialColor().primaryContainer.copy(alpha = 0.2f)
 
     @Composable
-    fun navigationSelectedItemColor() = MaterialTheme.colorScheme.onPrimaryContainer
+    fun navigationContentColor() = materialColor().primary
 
     @Composable
-    fun navigationIndicatorColor() = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
+    fun navigationSelectedItemColor() = materialColor().primary
+
+    @Composable
+    fun navigationIndicatorColor() = materialColor().primaryContainer.copy(alpha = 0.0f)
 }
 
 @CwrPreviews
@@ -205,14 +215,14 @@ object CwrNavigationDefaults {
 fun CwrNavigationBarPreview() {
     val items = listOf("Home", "Bookmarks", "Tools")
     val icons = listOf(
-        CwrIcons.UpcomingBorder,
-        CwrIcons.BookmarksBorder,
-        CwrIcons.Grid3x3,
+        CwrIcons.Home,
+        CwrIcons.Bookmark,
+        CwrIcons.Tools,
     )
     val selectedIcons = listOf(
-        CwrIcons.Upcoming,
-        CwrIcons.Bookmarks,
-        CwrIcons.Grid3x3,
+        CwrIcons.HomeSelected,
+        CwrIcons.BookmarkSelected,
+        CwrIcons.ToolsSelected,
     )
 
     PdfReaderTheme {
@@ -245,14 +255,14 @@ fun CwrNavigationBarPreview() {
 fun CwrNavigationRailPreview() {
     val items = listOf("Home", "Bookmarks", "Tools")
     val icons = listOf(
-        CwrIcons.UpcomingBorder,
-        CwrIcons.BookmarksBorder,
-        CwrIcons.Grid3x3,
+        CwrIcons.Home,
+        CwrIcons.Bookmark,
+        CwrIcons.Tools,
     )
     val selectedIcons = listOf(
-        CwrIcons.Upcoming,
-        CwrIcons.Bookmarks,
-        CwrIcons.Grid3x3,
+        CwrIcons.HomeSelected,
+        CwrIcons.BookmarkSelected,
+        CwrIcons.ToolsSelected,
     )
 
     PdfReaderTheme {

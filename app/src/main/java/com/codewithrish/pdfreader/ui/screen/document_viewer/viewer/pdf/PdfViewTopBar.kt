@@ -7,22 +7,23 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiEvent
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiState
+import com.codewithrish.pdfreader.ui.theme.materialColor
+import java.io.File
 
 @Composable
 fun PdfViewTopBar(
@@ -33,32 +34,43 @@ fun PdfViewTopBar(
 {
     val context = LocalContext.current
 
-    Row  (
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-            .background(MaterialTheme.colorScheme.background)
+            .background(materialColor().background)
             .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.End,
+        horizontalArrangement = Arrangement.Start, // Align everything to start
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Back Arrow aligned to start
         Icon(
             imageVector = CwrIcons.BackArrow,
             contentDescription = "Back",
-            tint = MaterialTheme.colorScheme.onBackground,
+            tint = materialColor().onBackground,
             modifier = Modifier.clickable { goBack() }
         )
+
+        // Spacer with weight to push the rest to the end
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Icons for ViewMode and Share aligned to end
         Row(
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.Share,
+                imageVector = CwrIcons.ViewMode,
+                contentDescription = "View Mode",
+                tint = materialColor().onBackground,
+                modifier = Modifier.clickable {
+                    onEvent(ViewDocumentUiEvent.ToggleBottomSheet)
+                }
+            )
+            Icon(
+                imageVector = CwrIcons.Share,
                 contentDescription = "Share",
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = materialColor().onBackground,
                 modifier = Modifier.clickable {
                     // Trigger the share action when clicked
                     sharePdf(context, state.document)
@@ -66,15 +78,17 @@ fun PdfViewTopBar(
             )
         }
     }
+
 }
 
 // Function to share the PDF
 fun sharePdf(context: Context, document: Document?) {
     document?.uri?.let {
-        val uri = Uri.parse(it)
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", File(document.path))
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_TITLE, document.name)
             putExtra(Intent.EXTRA_SUBJECT, document.name)
             type = "application/pdf"
         }

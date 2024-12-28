@@ -184,6 +184,7 @@ dependencies {
 
     // Pdf Box
     implementation(libs.pdfbox.android)
+    implementation(libs.fontbox)
 
     // Lottie
     implementation(libs.lottie.compose)

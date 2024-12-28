@@ -17,6 +17,7 @@ data class DocumentEntity(
     val mimeType: String,
     val size: Long,
     val bookmarked: Boolean,
+    val isLocked: Boolean,
 )
 
 
@@ -29,6 +30,7 @@ fun DocumentEntity.toDocument(): Document {
         dateTime = dateTime,
         mimeType = mimeType,
         size = size,
-        bookmarked = bookmarked
+        bookmarked = bookmarked,
+        isLocked = isLocked
     )
 }

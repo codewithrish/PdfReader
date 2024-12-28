@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.codewithrish.pdfreader.core.model.home.Document
-import com.codewithrish.pdfreader.ui.components.DocumentDetails
 import com.codewithrish.pdfreader.ui.helper.PdfUtils
 
 @Composable
@@ -21,10 +20,11 @@ fun DocumentList(
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-//        contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 12.dp),
-//        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(documents) { document ->
+        items(
+            items = documents,
+            key = { it.id }
+        ) { document ->
             DocumentDetails(
                 document = document,
                 noOfPages = PdfUtils.getDocumentFromUri(LocalContext.current, Uri.parse(document.uri))?.numberOfPages ?: 0,

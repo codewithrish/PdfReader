@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.TextUnit
 @Composable
 fun CwrText(
     text: String,
-    fontWeight: FontWeight? = LocalTextStyle.current.fontWeight,
-    fontFamily: FontFamily? = LocalTextStyle.current.fontFamily,
+//    fontWeight: FontWeight? = LocalTextStyle.current.fontWeight,
+//    fontFamily: FontFamily? = LocalTextStyle.current.fontFamily,
     fontSize: TextUnit = TextUnit.Unspecified,
     textAlign: TextAlign? = null,
     color: Color = Color.Unspecified,
@@ -28,8 +28,8 @@ fun CwrText(
 ) {
     Text(
         text = text,
-        fontFamily = fontFamily,
-        fontWeight = fontWeight,
+//        fontFamily = fontFamily,
+//        fontWeight = fontWeight,
         fontSize = fontSize,
         textAlign = textAlign,
         color = color,

@@ -1,5 +1,6 @@
 package com.codewithrish.pdfreader.ui.helper
 
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -13,94 +14,15 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.tom_roush.pdfbox.pdmodel.PDDocument
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 
-sealed class SplitPdfResult {
-    data class Success(val uris: List<Uri>) : SplitPdfResult()
-    data class Error(val message: String) : SplitPdfResult()
-}
-
-
 object PdfUtils {
-    fun splitPdf(context: Context, document: Document, selectedFiles: List<Int>): SplitPdfResult {
-        val pdfUris = mutableListOf<Uri>()
-        return try {
-            val pdDocument = PDDocument.load(File(document.path)) // Load the document
-
-            // Filter valid page indices to avoid unnecessary errors
-            val validPages = selectedFiles.filter { it in 0 until pdDocument.numberOfPages }
-            if (validPages.isEmpty()) {
-                return SplitPdfResult.Error("No valid pages selected for splitting.")
-            }
-
-            // Process valid pages
-            validPages.forEach { pageIndex ->
-                val splitDoc = PDDocument().apply { addPage(pdDocument.getPage(pageIndex)) }
-                val fileName = "${document.name.removeSuffix(".pdf")}_page-${pageIndex + 1}.pdf"
-                pdfUris.add(savePdfToDownloads(context, splitDoc, document.name.removeSuffix(".pdf"), fileName))
-                splitDoc.close()
-            }
-
-            pdDocument.close()
-            SplitPdfResult.Success(pdfUris) // Return success with URIs
-        } catch (e: Exception) {
-            e.printStackTrace()
-            SplitPdfResult.Error("Failed to split PDF: ${e.message ?: "Unknown error"}")
-        }
-    }
-
-
-//    fun splitPdf(context: Context, document: Document, selectedFiles: List<Int>): List<Uri> {
-//        val pdfUris = mutableListOf<Uri>()
-//        try {
-//            val pdDocument = PDDocument.load(File(document.path))
-//
-//            // Filter valid page indices to avoid unnecessary checks
-//            val validPages = selectedFiles.filter { it in 0 until pdDocument.numberOfPages }
-//
-//            // Process only valid pages
-//            validPages.forEach { pageIndex ->
-//                val splitDoc = PDDocument().apply { addPage(pdDocument.getPage(pageIndex)) }
-//                val fileName = "${document.name.removeSuffix(".pdf")}_page-${pageIndex + 1}.pdf" // Naming starts at 1
-//                pdfUris.add(savePdfToDownloads(context, splitDoc, document.name.removeSuffix(".pdf"), fileName))
-//                splitDoc.close()
-//            }
-//
-//            pdDocument.close()
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
-//        return pdfUris
-//    }
-
-    private fun savePdfToDownloads(context: Context, document: PDDocument,folderName: String, fileName: String): Uri {
-        val resolver = context.contentResolver
-        val pdfUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val values = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/SplitPdfs/$folderName")
-            }
-            resolver.insert(MediaStore.Files.getContentUri("external"), values)
-        } else {
-            val fileDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "SplitPdfs")
-            if (!fileDir.exists()) fileDir.mkdirs()
-            val outputFile = File(fileDir, fileName)
-            Uri.fromFile(outputFile)
-        }
-
-        pdfUri?.let {
-            resolver.openOutputStream(it)?.use { outputStream ->
-                document.save(outputStream)
-            }
-        }
-
-        return pdfUri ?: throw IllegalStateException("Failed to save file: $fileName")
-    }
 
     fun mergePdfs(context: Context, pdfUris: List<Uri>, outputPdfPath: String) {
         val outputDocument = PDDocument()
@@ -144,13 +66,7 @@ object PdfUtils {
             var numberOfPages = 0
 
             // Query the content resolver
-            val cursor: Cursor? = contentResolver.query(
-                uri,
-                null,
-                null,
-                null,
-                null
-            )
+            val cursor: Cursor? = contentResolver.query(uri, null, null, null, null)
 
             cursor?.use {
                 if (it.moveToFirst()) {
@@ -197,6 +113,7 @@ object PdfUtils {
                 size = size,
                 bookmarked = false, // Adjust if additional logic for bookmarks is required
                 numberOfPages = numberOfPages,
+                isLocked = checkIfPdfIsPasswordProtected(uri, context.contentResolver)
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -221,52 +138,6 @@ object PdfUtils {
         }
     }
 
-    fun getPdfPages(context: Context, uri: Uri): List<Bitmap> {
-        val pages = mutableListOf<Bitmap>()
-        var pdfRenderer: PdfRenderer? = null
-        var page: PdfRenderer.Page? = null
-
-        try {
-            val parcelFileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
-                ?: throw FileNotFoundException("File not found at $uri")
-            pdfRenderer = PdfRenderer(parcelFileDescriptor)
-            for (i in 0 until pdfRenderer.pageCount) {
-                page = pdfRenderer.openPage(i)
-                val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
-                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                pages.add(bitmap)
-                page.close()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            pdfRenderer?.close()
-        }
-        return pages
-    }
-
-    fun getFirstPdfPage(context: Context, uri: Uri): Bitmap? {
-        var pdfRenderer: PdfRenderer? = null
-        var page: PdfRenderer.Page? = null
-        var pageBitmap: Bitmap? = null
-
-        try {
-            val parcelFileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
-                ?: throw FileNotFoundException("File not found at $uri")
-            pdfRenderer = PdfRenderer(parcelFileDescriptor)
-            page = pdfRenderer.openPage(0)
-            val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
-            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-            pageBitmap = bitmap
-            page.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            pdfRenderer?.close()
-        }
-        return pageBitmap
-    }
-
     // Function to extract number of pages from PDF file
     fun getPageCountFromUri(context: Context, uri: Uri): Int {
         val fileDescriptor: ParcelFileDescriptor? = context.contentResolver.openFileDescriptor(uri, "r")
@@ -283,6 +154,18 @@ object PdfUtils {
             0
         } finally {
             fileDescriptor.close()
+        }
+    }
+
+    fun checkIfPdfIsPasswordProtected(uri: Uri, contentResolver: ContentResolver): Boolean {
+        val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")
+            ?: return false
+        return try {
+            PdfRenderer(parcelFileDescriptor)
+            false
+        } catch (securityException: SecurityException) {
+            securityException.printStackTrace()
+            true
         }
     }
 }

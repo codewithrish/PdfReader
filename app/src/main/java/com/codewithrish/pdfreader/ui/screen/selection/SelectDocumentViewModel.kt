@@ -6,6 +6,7 @@ import com.codewithrish.pdfreader.core.common.network.DbResultState
 import com.codewithrish.pdfreader.core.domain.usecase.GetAllDocumentsUseCase
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.model.room.toDocument
+import com.codewithrish.pdfreader.ui.screen.tools.ToolType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -26,6 +27,10 @@ class SelectDocumentViewModel @Inject constructor(
 
     override fun onEvent(event: SelectDocumentUiEvent) {
         when (event) {
+            is SelectDocumentUiEvent.SaveToolType -> {
+                Timber.tag("SelectDocumentViewModel").d("SaveToolType")
+                saveToolType(event.toolType)
+            }
             is SelectDocumentUiEvent.LoadDocuments -> {
                 Timber.tag("SelectDocumentViewModel").d("LoadDocuments")
                 loadDocuments()
@@ -37,11 +42,19 @@ class SelectDocumentViewModel @Inject constructor(
 //                openImage(event.document)
             }
             is SelectDocumentUiEvent.SelectDocument -> {
+                Timber.tag("SelectDocumentViewModel").d("SelectDocument")
                 selectDocument(event.document)
             }
             is SelectDocumentUiEvent.UnSelectDocument -> {
+                Timber.tag("SelectDocumentViewModel").d("UnSelectDocument")
                 unSelectDocument(event.document)
             }
+        }
+    }
+
+    private fun saveToolType(toolType: ToolType) {
+        updateState {
+            it.copy(toolType = toolType)
         }
     }
 

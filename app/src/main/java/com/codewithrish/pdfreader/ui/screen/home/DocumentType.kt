@@ -36,23 +36,11 @@ enum class DocumentType(val mimeTypes: List<String?>) {
             MimeTypeMap.getSingleton().getMimeTypeFromExtension("txt"),
         )
     ),
-    PNG(
+    IMAGE(
         listOf(
             MimeTypeMap.getSingleton().getMimeTypeFromExtension("png"),
-        )
-    ),
-    JPG(
-        listOf(
             MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpg"),
-        )
-    ),
-    JPEG(
-        listOf(
             MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpeg"),
-        )
-    ),
-    WEBP(
-        listOf(
             MimeTypeMap.getSingleton().getMimeTypeFromExtension("webp"),
         )
     ),
@@ -62,5 +50,8 @@ enum class DocumentType(val mimeTypes: List<String?>) {
             MimeTypeMap.getSingleton().getMimeTypeFromExtension("mobi"),
             MimeTypeMap.getSingleton().getMimeTypeFromExtension("azw"),
         )
+    ),
+    NONE(
+        listOf()
     ),
 }

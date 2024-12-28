@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PdfReader</string>
+    <string name="app_name">Open PDF</string>
     <string name="feature_home">Home</string>
     <string name="feature_bookmark">Bookmarks</string>
     <string name="feature_tools">Tools</string>

@@ -1,9 +1,14 @@
 package com.codewithrish.pdfreader.navigation
 
-import com.codewithrish.pdfreader.R
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
+import com.codewithrish.pdfreader.R
+import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons.Bookmark
+import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons.BookmarkSelected
+import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons.Home
+import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons.HomeSelected
+import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons.Tools
+import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons.ToolsSelected
 import com.codewithrish.pdfreader.ui.screen.bookmark.BookmarksRoute
 import com.codewithrish.pdfreader.ui.screen.home.HomeGraph
 import com.codewithrish.pdfreader.ui.screen.home.HomeRoute
@@ -20,8 +25,8 @@ enum class TopLevelDestination(
     val baseRoute: KClass<*> = route,
 ) {
     HOME(
-        selectedIcon = CwrIcons.Upcoming,
-        unselectedIcon = CwrIcons.UpcomingBorder,
+        selectedIcon = HomeSelected,
+        unselectedIcon = Home,
         iconTextId = R.string.feature_home,
         titleTextId = R.string.app_name,
         route = HomeRoute::class,
@@ -29,16 +34,16 @@ enum class TopLevelDestination(
     ),
 
     BOOKMARK(
-        selectedIcon = CwrIcons.Bookmarks,
-        unselectedIcon = CwrIcons.BookmarksBorder,
+        selectedIcon = BookmarkSelected,
+        unselectedIcon = Bookmark,
         iconTextId = R.string.feature_bookmark,
         titleTextId = R.string.app_name,
         route = BookmarksRoute::class,
     ),
 
     TOOLS(
-        selectedIcon = CwrIcons.Grid3x3,
-        unselectedIcon = CwrIcons.Grid3x3,
+        selectedIcon = ToolsSelected,
+        unselectedIcon = Tools,
         iconTextId = R.string.feature_tools,
         titleTextId = R.string.app_name,
         route = ToolsRoute::class,

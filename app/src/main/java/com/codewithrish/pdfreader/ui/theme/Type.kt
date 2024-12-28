@@ -15,48 +15,45 @@ val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
+const val MANROPE = "Manrope"
+val POETSEN_ONE = R.font.poetsen_one_regular
+
+val nunitoFontFamily = FontFamily(
+    Font(
+        googleFont = GoogleFont(MANROPE),
+        fontProvider = provider,
+    )
+)
+
 val bodyFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Manrope"),
+        googleFont = GoogleFont(MANROPE),
         fontProvider = provider,
     )
 )
 
 val displayFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Manrope"),
+        googleFont = GoogleFont(MANROPE),
         fontProvider = provider,
     )
 )
 
 val titleLargeFontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Manrope"),
-        fontProvider = provider,
-        weight = FontWeight.ExtraBold,
-    )
+    androidx.compose.ui.text.font.Font(POETSEN_ONE)
 )
 
 val titleMediumFontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Manrope"),
-        fontProvider = provider,
-        weight = FontWeight.Bold,
-    )
+    androidx.compose.ui.text.font.Font(POETSEN_ONE)
 )
 
 val titleSmallFontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Manrope"),
-        fontProvider = provider,
-        weight = FontWeight.SemiBold,
-    )
+    androidx.compose.ui.text.font.Font(POETSEN_ONE)
 )
-
 
 val labelLargeFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Manrope"),
+        googleFont = GoogleFont(MANROPE),
         fontProvider = provider,
         weight = FontWeight.SemiBold,
     )
@@ -64,7 +61,7 @@ val labelLargeFontFamily = FontFamily(
 
 val labelMediumFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Manrope"),
+        googleFont = GoogleFont(MANROPE),
         fontProvider = provider,
         weight = FontWeight.Normal,
     )
@@ -72,7 +69,7 @@ val labelMediumFontFamily = FontFamily(
 
 val labelSmallFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Manrope"),
+        googleFont = GoogleFont(MANROPE),
         fontProvider = provider,
         weight = FontWeight.Normal,
     )
@@ -82,67 +79,25 @@ val labelSmallFontFamily = FontFamily(
 val baseline = Typography()
 
 val Typography = Typography(
-    displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
-    displayMedium = baseline.displayMedium.copy(fontFamily = displayFontFamily),
-    displaySmall = baseline.displaySmall.copy(fontFamily = displayFontFamily),
-    headlineLarge = baseline.headlineLarge.copy(fontFamily = displayFontFamily),
-    headlineMedium = baseline.headlineMedium.copy(fontFamily = displayFontFamily),
-    headlineSmall = baseline.headlineSmall.copy(fontFamily = displayFontFamily),
-    titleLarge = baseline.titleLarge.copy(fontFamily = titleLargeFontFamily),
-    titleMedium = baseline.titleMedium.copy(fontFamily = titleMediumFontFamily),
-    titleSmall = baseline.titleSmall.copy(fontFamily = titleSmallFontFamily),
-    bodyLarge = baseline.bodyLarge.copy(fontFamily = bodyFontFamily),
-    bodyMedium = baseline.bodyMedium.copy(fontFamily = bodyFontFamily),
-    bodySmall = baseline.bodySmall.copy(fontFamily = bodyFontFamily),
-    labelLarge = baseline.labelLarge.copy(fontFamily = labelLargeFontFamily),
-    labelMedium = baseline.labelMedium.copy(fontFamily = labelMediumFontFamily),
-    labelSmall = baseline.labelSmall.copy(fontFamily = labelSmallFontFamily),
+    displayLarge = baseline.displayLarge.copy(fontFamily = nunitoFontFamily),
+    displayMedium = baseline.displayMedium.copy(fontFamily = nunitoFontFamily),
+    displaySmall = baseline.displaySmall.copy(fontFamily = nunitoFontFamily),
+    headlineLarge = baseline.headlineLarge.copy(fontFamily = nunitoFontFamily),
+    headlineMedium = baseline.headlineMedium.copy(fontFamily = nunitoFontFamily),
+    headlineSmall = baseline.headlineSmall.copy(fontFamily = nunitoFontFamily),
+    titleLarge = baseline.titleLarge.copy(fontFamily = nunitoFontFamily),
+    titleMedium = baseline.titleMedium.copy(fontFamily = nunitoFontFamily),
+    titleSmall = baseline.titleSmall.copy(fontFamily = nunitoFontFamily),
+    bodyLarge = baseline.bodyLarge.copy(fontFamily = nunitoFontFamily),
+    bodyMedium = baseline.bodyMedium.copy(fontFamily = nunitoFontFamily),
+    bodySmall = baseline.bodySmall.copy(fontFamily = nunitoFontFamily),
+    labelLarge = baseline.labelLarge.copy(fontFamily = nunitoFontFamily),
+    labelMedium = baseline.labelMedium.copy(fontFamily = nunitoFontFamily),
+    labelSmall = baseline.labelSmall.copy(fontFamily = nunitoFontFamily),
 )
 
 @Composable
-fun displayLargeTextStyle() = MaterialTheme.typography.displayLarge
-
-@Composable
-fun displayMediumTextStyle() = MaterialTheme.typography.displayMedium
-
-@Composable
-fun displaySmallTextStyle() = MaterialTheme.typography.displaySmall
-
-@Composable
-fun headlineLargeTextStyle() = MaterialTheme.typography.headlineLarge
-
-@Composable
-fun headlineMediumTextStyle() = MaterialTheme.typography.headlineMedium
-
-@Composable
-fun headlineSmallTextStyle() = MaterialTheme.typography.headlineSmall
-
-@Composable
-fun titleLargeTextStyle() = MaterialTheme.typography.titleLarge
-
-@Composable
-fun titleMediumTextStyle() = MaterialTheme.typography.titleMedium
-
-@Composable
-fun titleSmallTextStyle() = MaterialTheme.typography.titleSmall
-
-@Composable
-fun bodyLargeTextStyle() = MaterialTheme.typography.bodyLarge
-
-@Composable
-fun bodyMediumTextStyle() = MaterialTheme.typography.bodyMedium
-
-@Composable
-fun bodySmallTextStyle() = MaterialTheme.typography.bodySmall
-
-@Composable
-fun labelLargeTextStyle() = MaterialTheme.typography.labelLarge
-
-@Composable
-fun labelMediumTextStyle() = MaterialTheme.typography.labelMedium
-
-@Composable
-fun labelSmallTextStyle() = MaterialTheme.typography.labelSmall
+fun materialTextStyle() = MaterialTheme.typography
 
 //Typography Style	Default Font Size	Line Height	Weight
 //Display Large	57.sp	64.sp	Normal (400)

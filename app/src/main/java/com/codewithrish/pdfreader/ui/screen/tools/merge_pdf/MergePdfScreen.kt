@@ -19,11 +19,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Dehaze
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -44,10 +41,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.codewithrish.pdfreader.core.common.util.DataUnitConverter
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
+import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.ui.helper.PdfUtils
-import com.codewithrish.pdfreader.ui.theme.bodySmallTextStyle
-import com.codewithrish.pdfreader.ui.theme.labelLargeTextStyle
+import com.codewithrish.pdfreader.ui.theme.materialColor
+import com.codewithrish.pdfreader.ui.theme.materialTextStyle
 import org.joda.time.DateTime
 
 @Composable
@@ -204,31 +202,31 @@ private fun MergeFileItem(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val bitMap = PdfUtils.getFirstPdfPage(context = LocalContext.current, uri = Uri.parse(document.path))
-        bitMap?.let {
-            Image(
-                painter = BitmapPainter(it.asImageBitmap()),
-                contentDescription = null,
-                modifier = Modifier.size(35.dp)
-            )
-        }
+//        val bitMap = PdfUtils.getFirstPdfPage(context = LocalContext.current, uri = Uri.parse(document.uri))
+//        bitMap?.let {
+//            Image(
+//                painter = BitmapPainter(it.asImageBitmap()),
+//                contentDescription = null,
+//                modifier = Modifier.size(35.dp)
+//            )
+//        }
         Column(
             modifier = Modifier.weight(1f)
         ) {
             CwrText(
                 text = document.name,
-                style = labelLargeTextStyle(),
+                style = materialTextStyle().labelLarge,
             )
             CwrText(
                 text = "PDF . ${DateTime(document.dateTime).toString("dd MMM yyyy")} . ${DataUnitConverter.formatDataSize(document.size)}",
-                style = bodySmallTextStyle(),
+                style = materialTextStyle().bodySmall,
             )
         }
         // Draggable Handle
         Image(
-            imageVector = Icons.Default.Dehaze,
+            imageVector = CwrIcons.Dehaze,
             contentDescription = null,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outlineVariant),
+            colorFilter = ColorFilter.tint(materialColor().outlineVariant),
             modifier = Modifier
                 .size(24.dp)
                 .pointerInput(Unit) {

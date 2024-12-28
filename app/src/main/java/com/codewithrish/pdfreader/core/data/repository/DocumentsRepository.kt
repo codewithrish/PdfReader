@@ -2,13 +2,15 @@ package com.codewithrish.pdfreader.core.data.repository
 
 import com.codewithrish.pdfreader.core.data.room.dao.DocumentDao
 import com.codewithrish.pdfreader.core.model.room.DocumentEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface DocumentsRepository {
     fun getAllDocuments(): Flow<List<DocumentEntity>>
     fun getDocumentsByMimeType(mimeType: String): Flow<List<DocumentEntity>>
-    fun loadById(id: Long): Flow<List<DocumentEntity>>
+    suspend fun getDocumentById(documentId: Long): DocumentEntity?
     fun searchDocuments(searchQuery: String, mimeType: String): Flow<List<DocumentEntity>>
     fun searchByName(searchQuery: String): Flow<List<DocumentEntity>>
     suspend fun insertDocument(user: DocumentEntity)
@@ -34,8 +36,10 @@ internal class DocumentsRepositoryImpl @Inject constructor(
         return documentDao.insertDocument(user)
     }
 
-    override fun loadById(id: Long): Flow<List<DocumentEntity>> {
-        return documentDao.loadById(id)
+    override suspend fun getDocumentById(documentId: Long): DocumentEntity? {
+        return withContext(Dispatchers.IO) {
+            documentDao.getDocumentById(documentId)
+        }
     }
 
     override fun searchDocuments(

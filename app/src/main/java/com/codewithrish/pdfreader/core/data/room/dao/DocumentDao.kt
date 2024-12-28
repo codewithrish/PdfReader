@@ -19,8 +19,8 @@ interface DocumentDao {
     fun searchByName(searchQuery: String): Flow<List<DocumentEntity>>
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertDocument(user: DocumentEntity)
-    @Query("SELECT * FROM documents WHERE id = :id")
-    fun loadById(id: Long): Flow<List<DocumentEntity>>
+    @Query("SELECT * FROM documents WHERE id = :documentId")
+    fun getDocumentById(documentId: Long): DocumentEntity?
     @Query("UPDATE documents SET bookmarked = :bookmarked WHERE id = :id")
     suspend fun updateBookmark(id: Long, bookmarked: Boolean)
     @Query("DELETE FROM documents WHERE id = :id")

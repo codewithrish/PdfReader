@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,7 +15,7 @@ import androidx.navigation.toRoute
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.navigation.serializer.genericNavType
 import com.codewithrish.pdfreader.navigation.wrapper.animatedComposable
-import com.codewithrish.pdfreader.ui.helper.PdfUtils
+import com.codewithrish.pdfreader.ui.helper.getPdfPagesIo
 import kotlinx.serialization.Serializable
 import kotlin.reflect.typeOf
 
@@ -33,17 +32,16 @@ fun NavGraphBuilder.documentScreen(
     animatedComposable<ViewDocumentRoute>(
         typeMap = mapOf(typeOf<Document>() to genericNavType<Document>())
     ) { backStackEntry ->
-        val document = backStackEntry.toRoute<ViewDocumentRoute>()
+        val document = backStackEntry.toRoute<ViewDocumentRoute>().document
         val viewDocumentViewModel: ViewDocumentViewModel = hiltViewModel()
         val viewDocumentUiState by viewDocumentViewModel.state.collectAsStateWithLifecycle()
         val viewDocumentUiEvent = viewDocumentViewModel.onEvent
 
         val context = LocalContext.current
 
-        val imageBitmaps: List<ImageBitmap> = PdfUtils.getPdfPages(context, Uri.parse(document.document.uri)).map { it.asImageBitmap() }
-
         LaunchedEffect(document) {
-            viewDocumentUiEvent(ViewDocumentUiEvent.LoadDocument(document.document, imageBitmaps))
+            val imageBitmaps = getPdfPagesIo(context, Uri.parse(document.uri)).map { it.asImageBitmap() }
+            viewDocumentUiEvent(ViewDocumentUiEvent.LoadDocument(document, imageBitmaps))
         }
 
         Surface {

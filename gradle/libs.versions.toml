@@ -150,7 +150,7 @@ androidx-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", v
 #Pdf Box Android
 pdfbox-android = { module = "com.tom-roush:pdfbox-android", version.ref = "pdfboxAndroid" }
 #pdfbox = { module = "org.apache.pdfbox:pdfbox", version.ref = "pdfbox" }
-#fontbox = { module = "org.apache.pdfbox:fontbox", version.ref = "pdfbox" }
+fontbox = { module = "org.apache.pdfbox:fontbox", version.ref = "pdfbox" }
 
 #Lottie
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }

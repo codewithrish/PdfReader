@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -24,8 +23,9 @@ import com.codewithrish.pdfreader.core.designsystem.component.CwrCardView
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiEvent
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiState
-import com.codewithrish.pdfreader.ui.theme.CwrShapes
-import com.codewithrish.pdfreader.ui.theme.bodySmallTextStyle
+import com.codewithrish.pdfreader.ui.theme.Shape
+import com.codewithrish.pdfreader.ui.theme.materialColor
+import com.codewithrish.pdfreader.ui.theme.materialTextStyle
 
 @Composable
 fun PdfViewBottomBar(
@@ -46,7 +46,7 @@ fun PdfViewBottomBar(
         modifier = modifier
             .fillMaxWidth()
             .height(70.dp)
-            .background(MaterialTheme.colorScheme.background),
+            .background(materialColor().background),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -59,7 +59,7 @@ fun PdfViewBottomBar(
                     .fillMaxHeight()
                     .wrapContentWidth(),
                 borderColor = selectedColor,
-                shape = CwrShapes.noCornerShape,
+                shape = Shape.noCornerShape,
             ) {
                 Box {
                     Image(
@@ -71,7 +71,7 @@ fun PdfViewBottomBar(
                     )
                     CwrText(
                         text = "${index + 1}",
-                        style = bodySmallTextStyle(),
+                        style = materialTextStyle().bodySmall,
                         color = Color.White,
                         modifier = Modifier
                             .align(Alignment.TopEnd)

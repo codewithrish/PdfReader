@@ -1,19 +1,17 @@
 package com.codewithrish.pdfreader.ui.screen.selection
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -22,9 +20,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
+import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.ui.TrackScreenViewEvent
 import com.codewithrish.pdfreader.ui.components.LoadingScreen
-import com.codewithrish.pdfreader.ui.screen.selection.components.DocumentGrid
+import com.codewithrish.pdfreader.ui.screen.selection.components.SelectDocumentContent
+import com.codewithrish.pdfreader.ui.screen.tools.ToolType
+import com.codewithrish.pdfreader.ui.theme.materialColor
+import com.codewithrish.pdfreader.ui.theme.materialTextStyle
 import java.io.File
 
 /**
@@ -36,6 +38,7 @@ fun SelectDocumentScreen(
     state: SelectDocumentUiState,
     onEvent: (SelectDocumentUiEvent) -> Unit,
     goBack: () -> Unit,
+    goToToolScreen: (ToolType, Document) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -67,11 +70,12 @@ fun SelectDocumentScreen(
                                     onEvent(SelectDocumentUiEvent.DeleteDocument(document))
                                 }
                             }.also {
-                                DocumentGrid(
+                                SelectDocumentContent(
+                                    toolType = state.toolType,
                                     documents = documents,
                                     selectedItems = state.selectedDocuments,
+                                    goToToolScreen = goToToolScreen,
                                     onEvent = onEvent,
-                                    modifier = modifier.padding(paddingValues)
                                 )
                             }
                         }
@@ -90,22 +94,21 @@ fun SelectDocumentTopBar(
     goBack: () -> Unit,
 ) {
     Row(
-        modifier = modifier
+        modifier = modifier.fillMaxWidth()
             .height(56.dp).padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Image(
+        Icon(
             imageVector = CwrIcons.BackArrow,
             contentDescription = "",
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+            tint = materialColor().onBackground,
             modifier = Modifier.clickable { goBack() }
         )
         CwrText(
             text = "Select Documents",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = modifier.weight(1f),
-            textAlign = TextAlign.Center
+            style = materialTextStyle().titleLarge,
+            modifier = Modifier.weight(1f)
         )
     }
 }

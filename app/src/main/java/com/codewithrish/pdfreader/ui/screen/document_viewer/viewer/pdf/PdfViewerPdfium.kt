@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.codewithrish.pdfreader.core.model.home.Document
+import com.codewithrish.pdfreader.ui.helper.unlockPdf
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiEvent
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiState
 import com.github.barteksc.pdfviewer.PDFView
@@ -31,6 +32,8 @@ fun PdfViewerPdfium(
         modifier = Modifier
             .fillMaxSize(),
     ) {
+//        if (state.document?.isLocked == true)
+//            unlockPdf(document.path, document.path, "Pdf@1234")
         AndroidView(
             factory = { ctx ->
                 PDFView(ctx, null).apply {

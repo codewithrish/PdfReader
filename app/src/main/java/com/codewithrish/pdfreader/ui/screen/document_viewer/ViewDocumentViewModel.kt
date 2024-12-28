@@ -36,6 +36,11 @@ class ViewDocumentViewModel @Inject constructor(
                 Timber.tag("ViewDocumentViewModel").d("ToggleTopBottomBars")
                 toggleTopBottomBars()
             }
+
+            ViewDocumentUiEvent.ToggleBottomSheet -> {
+                Timber.tag("ViewDocumentViewModel").d("ToggleBottomSheet")
+                toggleBottomSheet()
+            }
         }
     }
 
@@ -59,11 +64,17 @@ class ViewDocumentViewModel @Inject constructor(
     }
 
     private fun toggleTopBottomBars() {
-        Timber.tag("ViewDocumentViewModel").d("toggleTopBottomBars ${state.value.toggleTopBottomBars}")
         updateState {
-            Timber.tag("ViewDocumentViewModel").d("toggleTopBottomBars ${it.toggleTopBottomBars}")
             it.copy(
                 toggleTopBottomBars = !it.toggleTopBottomBars
+            )
+        }
+    }
+
+    private fun toggleBottomSheet() {
+        updateState {
+            it.copy(
+                toggleBottomSheet = !it.toggleBottomSheet
             )
         }
     }

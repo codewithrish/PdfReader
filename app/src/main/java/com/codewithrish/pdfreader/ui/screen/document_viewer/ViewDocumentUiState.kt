@@ -8,5 +8,6 @@ data class ViewDocumentUiState (
     val pages: List<ImageBitmap> = emptyList(),
     val pageNumber: Pair<Int, Int> = Pair(0, 0),
     var toggleTopBottomBars: Boolean = true,
+    var toggleBottomSheet: Boolean = false,
     val errorMessage: Pair<String, String> = Pair("View Document Screen Error", "Something went wrong")
 )

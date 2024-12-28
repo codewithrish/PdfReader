@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
+import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.ui.CwrAppState
 import com.codewithrish.pdfreader.ui.screen.bookmark.bookmarksScreen
 import com.codewithrish.pdfreader.ui.screen.home.HomeGraph
@@ -29,8 +30,8 @@ fun CwrNavHost(
     val navController = appState.navController
 
     // Define the `onToolClick` callback
-    val onToolClick: (ToolType) -> Unit = { toolType ->
-        navController.navigateToTool(toolType)
+    val onToolClick: (ToolType, Document) -> Unit = { toolType, document ->
+        navController.navigateToTool(toolType, document)
     }
 
     NavHost(
@@ -43,22 +44,26 @@ fun CwrNavHost(
             onSettingsClick = navController::navigateToSettings
         )
         bookmarksScreen(onDocumentClick = navController::navigateToViewDocument)
-        toolsSection(onToolClick = onToolClick)
+        toolsSection(onToolClick = navController::navigateToSelectDocument)
         documentScreen(goBack = navController::navigateUp)
         // Select File
-        selectDocumentScreen(goBack = navController::navigateUp)
+        selectDocumentScreen(
+            goBack = navController::navigateUp,
+            goToToolScreen = navController::navigateToTool
+        )
         // Tools Screen
-        splitPdfScreen()
+        splitPdfScreen(goBack = navController::navigateUp)
         mergePdfScreen()
         // Settings
         settingsGraph(goBack = navController::navigateUp)
     }
 }
 
-fun NavController.navigateToTool(toolType: ToolType) {
+fun NavController.navigateToTool(toolType: ToolType, document: Document) {
     when (toolType) {
-        ToolType.SPLIT_PDF -> navigateToSplitPdf()
+        ToolType.SPLIT_PDF -> navigateToSplitPdf(document.id)
         ToolType.MERGE_PDF -> navigateToMergePdf()
-        ToolType.IMAGE_TO_PDF -> navigateToSelectDocument()
+        ToolType.IMAGE_TO_PDF -> {}
+        ToolType.DEFAULT -> {}
     }
 }
