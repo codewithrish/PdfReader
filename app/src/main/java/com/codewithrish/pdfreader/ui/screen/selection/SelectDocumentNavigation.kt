@@ -23,7 +23,7 @@ fun NavController.navigateToSelectDocument(
 
 fun NavGraphBuilder.selectDocumentScreen(
     goBack: () -> Unit,
-    goToToolScreen: (ToolType, Document) -> Unit,
+    goToToolScreen: (ToolType, Document?, List<Long>?) -> Unit,
 ) {
     animatedComposable<SelectDocumentRoute>(
         typeMap = mapOf(typeOf<ToolType>() to enumNavType<ToolType>())

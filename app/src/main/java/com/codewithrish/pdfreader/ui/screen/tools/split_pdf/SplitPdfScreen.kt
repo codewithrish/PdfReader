@@ -5,13 +5,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +21,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,28 +37,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.core.designsystem.component.CwrButton
-import com.codewithrish.pdfreader.core.designsystem.component.CwrCardView
 import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
 import com.codewithrish.pdfreader.core.designsystem.component.CwrPreviewDialog
 import com.codewithrish.pdfreader.core.designsystem.component.CwrPreviews
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.designsystem.component.CwrZoomableImage
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
-import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.ui.components.CustomRadioButton
-import com.codewithrish.pdfreader.ui.helper.PdfOperationState
-import com.codewithrish.pdfreader.ui.helper.PdfOperationStateEnum
-import com.codewithrish.pdfreader.ui.helper.PdfUtils
 import com.codewithrish.pdfreader.ui.helper.getPdfPagesIo
-import com.codewithrish.pdfreader.ui.helper.splitPdf
 import com.codewithrish.pdfreader.ui.screen.home.DocumentDetails
 import com.codewithrish.pdfreader.ui.theme.PdfReaderTheme
 import com.codewithrish.pdfreader.ui.theme.Shape
 import com.codewithrish.pdfreader.ui.theme.materialColor
-import com.codewithrish.pdfreader.ui.theme.materialShape
 import com.codewithrish.pdfreader.ui.theme.materialTextStyle
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * [SplitPdfViewModel]
@@ -69,10 +58,10 @@ import timber.log.Timber
 
 @Composable
 fun SplitPdfScreen(
-    modifier: Modifier = Modifier,
     state: SplitPdfUiState,
     onEvent: (SplitPdfUiEvent) -> Unit,
     goBack: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
 
     val context = LocalContext.current
@@ -99,34 +88,29 @@ fun SplitPdfScreen(
 
     Scaffold (
         topBar = {
-            state.document?.let { document ->
-                SplitPdfTopBar(
-                    document = document,
-                    state = state,
-                    onEvent = onEvent,
-                    goBack = goBack
-                )
-            }
+            SplitPdfTopBar(
+                state = state,
+                onEvent = onEvent,
+                goBack = goBack
+            )
         },
         content = { paddingValues ->
-            Timber.tag("Split").d(state.pdfOperationStateEnum.name)
-            if (state.pdfOperationStateEnum == PdfOperationStateEnum.SUCCESS) {
+            if (state.splitPdfDocuments.isNotEmpty()) {
                 CwrContentBox(
                     modifier = modifier.padding(
                         top = paddingValues.calculateTopPadding(),
                         bottom = paddingValues.calculateBottomPadding()
                     ).fillMaxSize()
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        LazyColumn(
-                            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(state.splitPdfUris) { splitPdfUri ->
-                                DocumentDetails(PdfUtils.getDocumentFromUri(context, Uri.parse(splitPdfUri))!!, noOfPages = PdfUtils.getPageCountFromUri(context, Uri.parse(splitPdfUri)))
-                            }
+                    LazyColumn {
+                        items(
+                            items = state.splitPdfDocuments,
+                            key = { document -> document.uri }
+                        ) { document ->
+                            DocumentDetails(
+                                document = document,
+                                optionOneIcon = CwrIcons.Eye
+                            )
                         }
                     }
                 }
@@ -141,12 +125,7 @@ fun SplitPdfScreen(
                         state.document?.let { document ->
                             DocumentDetails(
                                 document = document,
-                                noOfPages = PdfUtils.getDocumentFromUri(
-                                    LocalContext.current,
-                                    Uri.parse(document.uri)
-                                )?.numberOfPages ?: 0,
-                                optionTwoIcon = CwrIcons.Eye,
-                                modifier = Modifier.padding(16.dp),
+                                modifier = Modifier.padding(bottom = 16.dp),
                             )
                             SplitPdfContent(
                                 state = state,
@@ -158,7 +137,7 @@ fun SplitPdfScreen(
             }
         },
         bottomBar = {
-            if (state.pdfOperationStateEnum != PdfOperationStateEnum.SUCCESS) {
+            if (state.splitPdfDocuments.isEmpty()) {
                 SplitPdfBottomBar(
                     state = state,
                     onEvent = onEvent
@@ -198,7 +177,6 @@ fun SplitPdfScreen(
 
 @Composable
 fun SplitPdfTopBar(
-    document: Document,
     state: SplitPdfUiState,
     onEvent: (SplitPdfUiEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -219,19 +197,19 @@ fun SplitPdfTopBar(
             modifier = Modifier.clickable { goBack() }
         )
         CwrText(
-            text = if (state.pdfOperationStateEnum == PdfOperationStateEnum.SUCCESS) "Extracted Pdfs" else "Split Pdf",
+            text = if (state.splitPdfDocuments.isNotEmpty()) "Extracted Pdfs" else "Split Pdf",
             style = materialTextStyle().titleLarge,
             modifier = Modifier
                 .wrapContentHeight()
                 .weight(1f)
         )
-        if (state.pdfOperationStateEnum != PdfOperationStateEnum.SUCCESS) {
+        if (state.splitPdfDocuments.isEmpty()) {
             Row( // Group RadioButton and text together
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CustomRadioButton(
-                    selected = state.selectedPages.size == state.pages.size,
+                    selected = state.pages.isNotEmpty() && state.selectedPages.isNotEmpty() && state.selectedPages.size == state.pages.size,
                     onClick = { onEvent(SplitPdfUiEvent.SelectAllPages(state.pages, state.selectedPages)) },
                     color = if (state.pages.size == state.selectedPages.size) materialColor().primary else materialColor().onBackground,
                     unselectedColor = if (state.pages.size == state.selectedPages.size) materialColor().primary else materialColor().onBackground
@@ -257,8 +235,6 @@ fun SplitPdfBottomBar(
     onEvent: (SplitPdfUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
     Row (
         modifier = modifier
@@ -272,30 +248,18 @@ fun SplitPdfBottomBar(
     ) {
         CwrButton(
             text = "Split Pdf Files (${state.selectedPages.size})",
-            enabled = state.selectedPages.isNotEmpty() && state.pdfOperationStateEnum != PdfOperationStateEnum.LOADING,
+            enabled = state.selectedPages.isNotEmpty() && !state.isLoading,
             modifier = modifier
                 .wrapContentHeight()
                 .weight(1f),
             onClick = {
-                val result = splitPdf(
-                    context = context,
-                    document = state.document!!,
-                    selectedFiles = state.selectedPages
-                )
-                coroutineScope.launch {
-                    result.collect { it1 ->
-                        when (it1) {
-                            is PdfOperationState.Idle -> { onEvent(SplitPdfUiEvent.PdfOperationState(PdfOperationStateEnum.IDLE)) }
-                            is PdfOperationState.Loading -> { onEvent(SplitPdfUiEvent.PdfOperationState(PdfOperationStateEnum.LOADING)) }
-                            is PdfOperationState.Error -> { onEvent(SplitPdfUiEvent.PdfOperationState(PdfOperationStateEnum.ERROR)) }
-                            is PdfOperationState.Success -> { onEvent(SplitPdfUiEvent.PdfOperationState(PdfOperationStateEnum.SUCCESS, it1.data.map { it2 -> it2.toString() })) }
-                        }
-                    }
+                state.document?.let {
+                    onEvent(SplitPdfUiEvent.SplitPdf(state.document, state.selectedPages))
                 }
             }
         )
         AnimatedVisibility(
-            visible = state.pdfOperationStateEnum == PdfOperationStateEnum.LOADING,
+            visible = state.isLoading,
             enter = scaleIn(animationSpec = tween(durationMillis = 300)),
             exit = scaleOut(animationSpec = tween(durationMillis = 300))
         ) {

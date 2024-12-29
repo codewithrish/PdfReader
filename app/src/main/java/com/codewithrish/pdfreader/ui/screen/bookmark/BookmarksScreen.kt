@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -37,7 +37,6 @@ import com.codewithrish.pdfreader.ui.theme.materialColor
 import com.codewithrish.pdfreader.ui.theme.materialTextStyle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.io.File
 
 /**
@@ -51,8 +50,6 @@ fun BookmarksScreen(
     onDocumentClick: (Document) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-
     val lifecycleOwner = LocalLifecycleOwner.current
 
     // Observe lifecycle events
@@ -87,8 +84,6 @@ fun BookmarksScreen(
                         if (documents.isNotEmpty()) {
                             documents.forEach { document ->
                                 val file = File(document.path)
-                                Timber.tag("HomeScreen")
-                                    .d("File exists: ${document.path} ${file.exists()}")
                                 if (!file.exists()) {
                                     onEvent(BookmarksUiEvent.DeleteDocument(document))
                                 }
@@ -100,7 +95,7 @@ fun BookmarksScreen(
                                     onBookmarkClick = { id, isBookmarked ->
                                         onEvent(BookmarksUiEvent.OnBookmarkClick(id, isBookmarked))
                                     },
-                                    modifier = Modifier
+                                    modifier = modifier.fillMaxSize()
                                 )
                             }
                         } else {

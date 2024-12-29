@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -26,19 +27,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codewithrish.pdfreader.R
 import com.codewithrish.pdfreader.core.common.util.DataUnitConverter
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
-import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.ui.components.HeartExplosionAnimation
 import com.codewithrish.pdfreader.ui.theme.Shape
@@ -49,11 +51,14 @@ import org.joda.time.DateTime
 @Composable
 fun DocumentDetails(
     document: Document,
-    noOfPages: Int,
-    optionTwoIcon: Int = CwrIcons.Icon3Dots,
+    optionOneIcon: ImageVector? = null,
+    optionTwoIcon: ImageVector? = null,
+    optionIconSize: Dp = 24.dp,
+    optionOneIconTint: Color = materialColor().onSurface,
+    optionTwoIconTint: Color = materialColor().onSurface,
     modifier: Modifier = Modifier,
     onDocumentClick: (Document) -> Unit = {},
-    onBookmarkClick: (Long, Boolean) -> Unit = { _, _ -> },
+    optionOneClick: (Long, Boolean) -> Unit = { _, _ -> },
 ) {
     var bookmarkOffset by remember { mutableStateOf(Offset.Zero) }
     var animationKey by remember { mutableIntStateOf(0) }
@@ -106,7 +111,7 @@ fun DocumentDetails(
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
                 CwrText(
-                    text = "${DataUnitConverter.formatDataSize(document.size)}  |  ${DateTime(document.dateTime).toString("dd MMM yyyy")}  |  $noOfPages pages",
+                    text = "${DataUnitConverter.formatDataSize(document.size)}  |  ${DateTime(document.dateTime).toString("dd MMM yyyy")}",
                     style = materialTextStyle().bodySmall.copy(
                         letterSpacing = 1.sp
                     ),
@@ -114,54 +119,60 @@ fun DocumentDetails(
                 )
             }
             // Bookmark Icon
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(Shape.small)
-                    .background(Color.Transparent)
-                    .onGloballyPositioned { coordinates ->
-                        // Capture the global position and adjust for the parent layout's position
-                        bookmarkOffset = coordinates.positionInRoot()
-                    }
-                    .clickable(
-                        onClick = {
-                            val newLikedState = !document.bookmarked
-                            onBookmarkClick(document.id, newLikedState)
-                            // Trigger the animation only if it's being liked (not unliked)
-                            if (newLikedState) {
-                                animationKey++
-                            }
-                            previousLikedState = newLikedState
-                        },
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(if (document.bookmarked) CwrIcons.BookmarkAdded else CwrIcons.BookmarkAdd),
-                    contentDescription = null,
-                    modifier = Modifier.size(15.dp)
-                )
+            optionOneIcon?.let {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(Shape.small)
+                        .background(Color.Transparent)
+                        .onGloballyPositioned { coordinates ->
+                            // Capture the global position and adjust for the parent layout's position
+                            bookmarkOffset = coordinates.positionInRoot()
+                        }
+                        .clickable(
+                            onClick = {
+                                val newLikedState = !document.bookmarked
+                                optionOneClick(document.id, newLikedState)
+                                // Trigger the animation only if it's being liked (not unliked)
+                                if (newLikedState) {
+                                    animationKey++
+                                }
+                                previousLikedState = newLikedState
+                            },
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = optionOneIcon,
+                        contentDescription = null,
+                        tint = optionOneIconTint,
+                        modifier = Modifier.size(optionIconSize)
+                    )
+                }
             }
             // More Options Icon
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(Shape.small)
-                    .background(Color.Transparent)
-                    .clickable(
-                        onClick = { /* Action */ },
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(optionTwoIcon),
-                    contentDescription = null,
-                    modifier = Modifier.size(15.dp)
-                )
+            optionTwoIcon?.let {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(Shape.small)
+                        .background(Color.Transparent)
+                        .clickable(
+                            onClick = { /* Action */ },
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = optionTwoIcon,
+                        contentDescription = null,
+                        tint = optionTwoIconTint,
+                        modifier = Modifier.size(optionIconSize)
+                    )
+                }
             }
         }
 
@@ -210,6 +221,5 @@ private fun DocumentDetailsPreview() {
             bookmarked = false,
             isLocked = false,
         ),
-        noOfPages = 10
     )
 }

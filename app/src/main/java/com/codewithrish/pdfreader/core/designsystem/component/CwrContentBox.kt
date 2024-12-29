@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun CwrContentBox(
     paddingValues: PaddingValues = PaddingValues(),
+    contentAlignment: Alignment = Alignment.Center,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -18,7 +19,7 @@ fun CwrContentBox(
         modifier = modifier
             .fillMaxSize()
             .padding(paddingValues),
-        contentAlignment = Alignment.Center
+        contentAlignment = contentAlignment
     ) {
         content()
     }

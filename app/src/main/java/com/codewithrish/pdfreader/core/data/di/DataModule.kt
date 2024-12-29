@@ -4,6 +4,8 @@ import com.codewithrish.pdfreader.core.data.repository.DocumentsRepository
 import com.codewithrish.pdfreader.core.data.repository.DocumentsRepositoryImpl
 import com.codewithrish.pdfreader.core.data.repository.LoadFilesRepository
 import com.codewithrish.pdfreader.core.data.repository.LoadFilesRepositoryImpl
+import com.codewithrish.pdfreader.core.data.repository.PdfOperationsRepository
+import com.codewithrish.pdfreader.core.data.repository.PdfOperationsRepositoryImpl
 import com.codewithrish.pdfreader.core.data.repository.UserDataRepository
 import com.codewithrish.pdfreader.core.data.repository.UserDataRepositoryImpl
 import com.codewithrish.pdfreader.core.data.util.TimeZoneBroadcastMonitor
@@ -30,6 +32,11 @@ abstract class DataModule {
     internal abstract fun bindsLoadFilesRepository(
         loadFilesRepository: LoadFilesRepositoryImpl
     ): LoadFilesRepository
+
+    @Binds
+    internal abstract fun bindsPdfOperationsRepository(
+        pdfOperationsRepository: PdfOperationsRepositoryImpl
+    ): PdfOperationsRepository
 
     @Binds
     internal abstract fun binds(impl: TimeZoneBroadcastMonitor): TimeZoneMonitor

@@ -21,6 +21,8 @@ interface DocumentDao {
     suspend fun insertDocument(user: DocumentEntity)
     @Query("SELECT * FROM documents WHERE id = :documentId")
     fun getDocumentById(documentId: Long): DocumentEntity?
+    @Query("SELECT * FROM documents WHERE id IN (:documentIds)")
+    suspend fun getDocumentsByIds(documentIds: List<Long>): List<DocumentEntity>
     @Query("UPDATE documents SET bookmarked = :bookmarked WHERE id = :id")
     suspend fun updateBookmark(id: Long, bookmarked: Boolean)
     @Query("DELETE FROM documents WHERE id = :id")

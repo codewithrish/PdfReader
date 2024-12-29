@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -44,16 +43,17 @@ fun SelectDocumentList(
     toolType: ToolType,
     pdfs: List<Document>,
     selectedItems: List<Document>,
-    goToToolScreen: (ToolType, Document) -> Unit,
+    goToToolScreen: (ToolType, Document?, List<Long>?) -> Unit,
     onEvent: (SelectDocumentUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize(),
-//        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        items(pdfs.size) { index ->
+        items(
+            pdfs.size,
+        ) { index ->
             SelectDocumentItem(
                 toolType = toolType,
                 pdf = pdfs[index],
@@ -71,12 +71,12 @@ fun SelectDocumentItem(
     toolType: ToolType,
     pdf: Document,
     isSelected: Boolean,
-    goToToolScreen: (ToolType, Document) -> Unit,
+    goToToolScreen: (ToolType, Document?, List<Long>?) -> Unit,
     onEvent: (SelectDocumentUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(if (isSelected) materialColor().surfaceVariant else Color.Transparent)
             .clickable {
                 if (toolType.multiSelection) {
@@ -86,7 +86,7 @@ fun SelectDocumentItem(
                         onEvent(SelectDocumentUiEvent.SelectDocument(pdf))
                     }
                 } else {
-                    goToToolScreen(toolType, pdf)
+                    goToToolScreen(toolType, pdf, null)
                 }
             },
     ) {
@@ -167,7 +167,7 @@ private fun SelectDocumentItemPreview() {
                 isLocked = false,
             ),
             isSelected = true,
-            goToToolScreen = { _, _ -> },
+            goToToolScreen = { _, _, _ -> },
             onEvent = {}
         )
     }

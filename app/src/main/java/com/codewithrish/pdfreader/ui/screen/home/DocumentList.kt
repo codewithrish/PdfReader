@@ -1,15 +1,16 @@
 package com.codewithrish.pdfreader.ui.screen.home
 
-import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.core.model.home.Document
-import com.codewithrish.pdfreader.ui.helper.PdfUtils
+import com.codewithrish.pdfreader.ui.theme.materialColor
+import com.codewithrish.pdfreader.ui.theme.pdfRedColor
 
 @Composable
 fun DocumentList(
@@ -27,9 +28,12 @@ fun DocumentList(
         ) { document ->
             DocumentDetails(
                 document = document,
-                noOfPages = PdfUtils.getDocumentFromUri(LocalContext.current, Uri.parse(document.uri))?.numberOfPages ?: 0,
                 onDocumentClick = onDocumentClick,
-                onBookmarkClick = onBookmarkClick,
+                optionOneClick = onBookmarkClick,
+                optionIconSize = 15.dp,
+                optionOneIcon = if (document.bookmarked) CwrIcons.BookmarkAdded else CwrIcons.BookmarkAdd,
+                optionTwoIcon = CwrIcons.Icon3Dots,
+                optionOneIconTint = if (document.bookmarked) pdfRedColor else materialColor().onSurface,
                 modifier = modifier.fillMaxWidth()
             )
         }

@@ -1,18 +1,14 @@
 package com.codewithrish.pdfreader.core.data.repository
 
 import android.annotation.SuppressLint
-import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
-import android.graphics.pdf.PdfRenderer
-import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import com.codewithrish.pdfreader.core.model.room.DocumentEntity
-import com.codewithrish.pdfreader.ui.helper.PdfUtils.checkIfPdfIsPasswordProtected
 import com.codewithrish.pdfreader.ui.screen.home.DocumentType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers

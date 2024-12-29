@@ -1,243 +1,155 @@
 package com.codewithrish.pdfreader.ui.screen.tools.merge_pdf
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
-import com.codewithrish.pdfreader.core.common.util.DataUnitConverter
+import com.codewithrish.pdfreader.core.designsystem.component.CwrButton
+import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
-import com.codewithrish.pdfreader.core.model.home.Document
-import com.codewithrish.pdfreader.ui.helper.PdfUtils
+import com.codewithrish.pdfreader.ui.screen.home.DocumentDetails
+import com.codewithrish.pdfreader.ui.theme.Shape
 import com.codewithrish.pdfreader.ui.theme.materialColor
 import com.codewithrish.pdfreader.ui.theme.materialTextStyle
-import org.joda.time.DateTime
 
 @Composable
 fun MergePdfScreen(
+    state: MergePdfUiState,
+    onEvent: (MergePdfUiEvent) -> Unit,
+    goBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    var selectedPdfUris = remember { mutableStateListOf<Uri>() }
-    var selectedPdfDocuments = remember { mutableStateListOf<Document?>() }
-
-    val pickPdfsLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenMultipleDocuments()
-    ) { uris ->
-        uris.forEach {  uri ->
-            selectedPdfDocuments.add(PdfUtils.getDocumentFromUri(context, uri))
-        }
-        selectedPdfUris.addAll(uris)
-    }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-            ,
-            onClick = {
-                pickPdfsLauncher.launch(arrayOf("application/pdf"))
-            }
-        ) {
-            CwrText("Select Multiple Files")
-        }
-
-        if (selectedPdfDocuments.isNotEmpty()) {
-//            selectedPdfDocuments.filterNotNull().toMutableList()
-            MyList()
-        }
-    }
-}
-
-@Composable
-fun MyList() {
-    var list1 by remember { mutableStateOf(List(5) { it }) }
-    val list2 by remember { mutableStateOf(List(5) { it + 5 }) }
-    val stateList = rememberLazyListState()
-
-    var draggingItemIndex: Int? by remember {
-        mutableStateOf(null)
-    }
-
-    var delta: Float by remember {
-        mutableFloatStateOf(0f)
-    }
-
-    LazyColumn(
-        modifier = Modifier
-            .pointerInput(key1 = stateList) {
-                detectDragGesturesAfterLongPress(
-                    onDragStart = { offset ->
-                        stateList.layoutInfo.visibleItemsInfo
-                            .firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
-                            ?.also {
-                                (it.contentType as? DraggableItem)?.let { draggableItem ->
-                                    draggingItemIndex = draggableItem.index
-                                }
-                            }
-                    },
-                    onDrag = { change, dragAmount ->
-                        change.consume()
-                        delta += dragAmount.y
-                    },
-                    onDragEnd = {
-                        draggingItemIndex = null
-                        delta = 0f
-                    },
-                    onDragCancel = {
-                        draggingItemIndex = null
-                        delta = 0f
-                    },
-                )
-            },
-        state = stateList,
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            CwrText(text = "Title 1", fontSize = 30.sp)
-        }
-
-        itemsIndexed(
-            items = list1,
-            contentType = { index, _ -> DraggableItem(index = index) },
-        ) { index, item ->
-            val modifier = if (draggingItemIndex == index) {
-                Modifier
-                    .zIndex(1f)
-                    .graphicsLayer {
-                        translationY = delta
+    Scaffold (
+        topBar = {
+            MergePdfTopBar(
+                state = state,
+                goBack = goBack
+            )
+        },
+        content = { paddingValues ->
+            CwrContentBox(
+                modifier = modifier
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding()
+                    )
+                    .fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                state.mergedPdfDocument?.let {
+                    DocumentDetails(
+                        document = state.mergedPdfDocument,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                } ?: run {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        itemsIndexed(
+                            items = state.selectedDocuments,
+                            key = { index, document -> document.id }
+                        ) { index, document ->
+                            DocumentDetails(
+                                document = document,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
                     }
-            } else {
-                Modifier
+                }
             }
-            Item(
-                modifier = modifier,
-                index = item,
+        },
+        bottomBar = {
+            MergePdfBottomBar(
+                state = state,
+                onEvent = onEvent
             )
         }
-
-        item {
-            CwrText(text = "Title 2", fontSize = 30.sp)
-        }
-
-        itemsIndexed(list2, key = { _, item -> item }) { _, item ->
-            Item(index = item)
-        }
-
-    }
+    )
 }
 
-
 @Composable
-private fun Item(modifier: Modifier = Modifier, index: Int) {
-    Card(
-        modifier = modifier
-    ) {
-        CwrText(
-            "Item $index",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        )
-    }
-}
-
-
-@Composable
-private fun MergeFileItem(
+fun MergePdfTopBar(
+    state: MergePdfUiState,
     modifier: Modifier = Modifier,
-    document: Document,
-    index: Int,
-    stateList: LazyListState,
-    onDrag: (offset: androidx.compose.ui.geometry.Offset) -> Unit,
-    onDragMove: (dragAmount: androidx.compose.ui.geometry.Offset) -> Unit,
-    onDragEnd: () -> Unit
+    goBack: () -> Unit,
 ) {
     Row(
         modifier = modifier
-            .wrapContentHeight()
-            .padding(16.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth()
+            .height(56.dp)
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-//        val bitMap = PdfUtils.getFirstPdfPage(context = LocalContext.current, uri = Uri.parse(document.uri))
-//        bitMap?.let {
-//            Image(
-//                painter = BitmapPainter(it.asImageBitmap()),
-//                contentDescription = null,
-//                modifier = Modifier.size(35.dp)
-//            )
-//        }
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            CwrText(
-                text = document.name,
-                style = materialTextStyle().labelLarge,
-            )
-            CwrText(
-                text = "PDF . ${DateTime(document.dateTime).toString("dd MMM yyyy")} . ${DataUnitConverter.formatDataSize(document.size)}",
-                style = materialTextStyle().bodySmall,
-            )
-        }
-        // Draggable Handle
-        Image(
-            imageVector = CwrIcons.Dehaze,
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(materialColor().outlineVariant),
+        Icon(
+            imageVector = CwrIcons.BackArrow,
+            contentDescription = "",
+            tint = materialColor().onBackground,
+            modifier = Modifier.clickable { goBack() }
+        )
+        CwrText(
+            text = if (state.mergedPdfDocument != null) "Your Merged Pdf" else "Selected Pdfs to Merge",
+            style = materialTextStyle().titleLarge,
             modifier = Modifier
-                .size(24.dp)
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = { offset -> onDrag(offset) },
-                        onDrag = { _, dragAmount -> onDragMove(dragAmount) },
-                        onDragEnd = { onDragEnd() }
-                    )
-                }
+                .wrapContentHeight()
+                .weight(1f)
         )
     }
 }
 
-data class DraggableItem(val index: Int)
+@Composable
+fun MergePdfBottomBar(
+    state: MergePdfUiState,
+    onEvent: (MergePdfUiEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row (
+        modifier = modifier
+            .shadow(elevation = 8.dp, shape = Shape.noCornerShape)
+            .background(color = materialColor().surface)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        CwrButton(
+            text = "Merge (${state.selectedDocuments.size}) Pdf Files",
+            enabled = state.selectedDocuments.isNotEmpty() && !state.isLoading,
+            modifier = modifier
+                .wrapContentHeight()
+                .weight(1f),
+            onClick = {
+                onEvent(MergePdfUiEvent.MergePdf(state.selectedDocuments, "Merged File.pdf"))
+            }
+        )
+        AnimatedVisibility(
+            visible = state.isLoading,
+            enter = scaleIn(animationSpec = tween(durationMillis = 300)),
+            exit = scaleOut(animationSpec = tween(durationMillis = 300))
+        ) {
+            CircularProgressIndicator(modifier = Modifier.size(32.dp))
+        }
+    }
+}

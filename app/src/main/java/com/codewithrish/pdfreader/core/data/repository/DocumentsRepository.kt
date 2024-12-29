@@ -11,6 +11,7 @@ interface DocumentsRepository {
     fun getAllDocuments(): Flow<List<DocumentEntity>>
     fun getDocumentsByMimeType(mimeType: String): Flow<List<DocumentEntity>>
     suspend fun getDocumentById(documentId: Long): DocumentEntity?
+    suspend fun getDocumentsByIds(documentIds: List<Long>): List<DocumentEntity>
     fun searchDocuments(searchQuery: String, mimeType: String): Flow<List<DocumentEntity>>
     fun searchByName(searchQuery: String): Flow<List<DocumentEntity>>
     suspend fun insertDocument(user: DocumentEntity)
@@ -40,6 +41,10 @@ internal class DocumentsRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             documentDao.getDocumentById(documentId)
         }
+    }
+
+    override suspend fun getDocumentsByIds(documentIds: List<Long>): List<DocumentEntity> {
+        return documentDao.getDocumentsByIds(documentIds)
     }
 
     override fun searchDocuments(

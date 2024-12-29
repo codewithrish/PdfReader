@@ -5,8 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.codewithrish.pdfreader.core.common.BaseViewModel
 import com.codewithrish.pdfreader.core.common.network.DbResultState
 import com.codewithrish.pdfreader.core.domain.usecase.GetDocumentByIdUseCase
+import com.codewithrish.pdfreader.core.domain.usecase.SplitPdfUseCase
+import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.model.room.toDocument
-import com.codewithrish.pdfreader.ui.helper.PdfOperationStateEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplitPdfViewModel @Inject constructor(
-    private val getDocumentByIdUseCase: GetDocumentByIdUseCase
+    private val getDocumentByIdUseCase: GetDocumentByIdUseCase,
+    private val splitPdfUseCase: SplitPdfUseCase,
 ) : BaseViewModel<SplitPdfUiState, SplitPdfUiEvent>() {
     override fun initState():SplitPdfUiState = SplitPdfUiState()
 
@@ -55,9 +57,9 @@ class SplitPdfViewModel @Inject constructor(
                 selectAllPages(event.pages, event.selectedPages)
             }
 
-            is SplitPdfUiEvent.PdfOperationState -> {
-                Timber.tag("SplitPdfViewModel").d("PdfOperationState")
-                updatePdfOperationState(event.pdfOperationStateEnum, event.splitPdfUris)
+            is SplitPdfUiEvent.SplitPdf -> {
+                Timber.tag("SplitPdfViewModel").d("SplitPdf")
+                splitPdf(event.document, event.selectedPages)
             }
         }
     }
@@ -144,15 +146,31 @@ class SplitPdfViewModel @Inject constructor(
         }
     }
 
-    private fun updatePdfOperationState(
-        pdfOperationStateEnum: PdfOperationStateEnum,
-        splitPdfUris: List<String>
-    ) {
-        updateState {
-            it.copy(
-                pdfOperationStateEnum = pdfOperationStateEnum,
-                splitPdfUris = splitPdfUris
-            )
+    private fun splitPdf(document: Document, selectedPages: List<Int>) {
+        viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+            splitPdfUseCase(document, selectedPages).collectLatest { result ->
+                when (result) {
+                    is DbResultState.Error -> updateState {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = Pair(it.errorMessage.first, result.error)
+                        )
+                    }
+                    is DbResultState.Idle -> updateState {
+                        SplitPdfUiState(isLoading = false)
+                    }
+                    is DbResultState.Loading -> updateState {
+                        it.copy(isLoading = true)
+                    }
+                    is DbResultState.Success -> updateState {
+                        it.copy(
+                            isLoading = false,
+                            splitPdfDocuments = result.data.map { it1 -> it1.toDocument() }
+                        )
+                    }
+                }
+            }
         }
     }
 }

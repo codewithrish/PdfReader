@@ -29,11 +29,6 @@ fun CwrNavHost(
 ) {
     val navController = appState.navController
 
-    // Define the `onToolClick` callback
-    val onToolClick: (ToolType, Document) -> Unit = { toolType, document ->
-        navController.navigateToTool(toolType, document)
-    }
-
     NavHost(
         navController = navController,
         startDestination = HomeGraph,
@@ -53,16 +48,24 @@ fun CwrNavHost(
         )
         // Tools Screen
         splitPdfScreen(goBack = navController::navigateUp)
-        mergePdfScreen()
+        mergePdfScreen(goBack = navController::navigateUp)
         // Settings
         settingsGraph(goBack = navController::navigateUp)
     }
 }
 
-fun NavController.navigateToTool(toolType: ToolType, document: Document) {
+fun NavController.navigateToTool(toolType: ToolType, document: Document? = null, selectedDocumentIds: List<Long>? = null) {
     when (toolType) {
-        ToolType.SPLIT_PDF -> navigateToSplitPdf(document.id)
-        ToolType.MERGE_PDF -> navigateToMergePdf()
+        ToolType.SPLIT_PDF -> {
+            document?.let {
+                navigateToSplitPdf(document.id)
+            }
+        }
+        ToolType.MERGE_PDF -> {
+            selectedDocumentIds?.let {
+                navigateToMergePdf(selectedDocumentIds)
+            }
+        }
         ToolType.IMAGE_TO_PDF -> {}
         ToolType.DEFAULT -> {}
     }

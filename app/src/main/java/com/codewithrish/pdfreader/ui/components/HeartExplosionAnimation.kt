@@ -19,9 +19,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
-// @TODO fix animation sometimes showing same animation twice
 @Composable
 fun HeartExplosionAnimation(
     key: Int,
@@ -30,8 +28,6 @@ fun HeartExplosionAnimation(
 ) {
     // Skip rendering if key is 0 or not liked
     if (key == 0 || !isLiked) return
-
-    Timber.tag("HeartExplosionAnimation").d("HeartExplosionAnimation triggered with key: $key and isLiked: $isLiked")
 
     val hearts = List(6) {
         remember(key) { Animatable(0f) to Animatable(0f) } // Recreate animatables on new key

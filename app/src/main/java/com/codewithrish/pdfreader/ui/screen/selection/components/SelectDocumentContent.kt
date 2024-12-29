@@ -13,7 +13,7 @@ fun SelectDocumentContent(
     toolType: ToolType,
     documents: List<Document>,
     selectedItems: List<Document>,
-    goToToolScreen: (ToolType, Document) -> Unit,
+    goToToolScreen: (ToolType, Document?, List<Long>?) -> Unit,
     onEvent: (SelectDocumentUiEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -25,6 +25,7 @@ fun SelectDocumentContent(
                 selectedItems = selectedItems,
                 goToToolScreen = goToToolScreen,
                 onEvent = onEvent,
+                modifier = modifier
             )
 //            PdfGrid(
 //                toolType = toolType,
