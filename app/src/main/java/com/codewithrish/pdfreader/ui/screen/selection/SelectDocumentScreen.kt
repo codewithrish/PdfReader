@@ -4,9 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -64,11 +68,15 @@ fun SelectDocumentScreen(
             SelectDocumentTopBar(
                 toolType = state.toolType,
                 goBack = goBack,
-                modifier = modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
             )
         },
         content = { paddingValues ->
-            CwrContentBox(paddingValues = paddingValues) {
+            CwrContentBox(
+                paddingValues =   paddingValues//PaddingValues(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding())
+            ) {
                 if (state.isLoading) {
                     LoadingScreen()
                 }
@@ -95,10 +103,13 @@ fun SelectDocumentScreen(
             }
         },
         bottomBar = {
-            if (state.toolType.multiSelection) {
+            if (state.toolType.multiSelection && !state.isLoading) {
                 SelectDocumentBottomBar(
                     state = state,
                     goToToolScreen = goToToolScreen,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()),
                 )
             }
         }
@@ -146,8 +157,9 @@ fun SelectDocumentBottomBar(
     goToToolScreen: (ToolType, Document?, List<Long>?) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     Row (
-        modifier = modifier
+        modifier = Modifier
             .shadow(elevation = 8.dp, shape = Shape.noCornerShape)
             .background(color = materialColor().surface)
             .fillMaxWidth()

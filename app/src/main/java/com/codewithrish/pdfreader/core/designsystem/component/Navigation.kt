@@ -1,5 +1,7 @@
 package com.codewithrish.pdfreader.core.designsystem.component
 
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Icon
@@ -18,12 +20,14 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.ui.theme.PdfReaderTheme
 import com.codewithrish.pdfreader.ui.theme.materialColor
-import com.codewithrish.pdfreader.ui.theme.pdfRedColor
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun RowScope.CwrNavigationBarItem(
@@ -51,6 +55,7 @@ fun RowScope.CwrNavigationBarItem(
             unselectedTextColor = CwrNavigationDefaults.navigationContentColor(),
             indicatorColor = CwrNavigationDefaults.navigationIndicatorColor(),
         ),
+        interactionSource = remember { NoRippleInteractionSource() }, // Disable ripple
     )
 }
 
@@ -93,6 +98,7 @@ fun CwrNavigationRailItem(
             unselectedTextColor = CwrNavigationDefaults.navigationContentColor(),
             indicatorColor = CwrNavigationDefaults.navigationIndicatorColor(),
         ),
+        interactionSource = remember { NoRippleInteractionSource() }, // Disable ripple
     )
 }
 
@@ -111,12 +117,17 @@ fun CwrNavigationRail(
     )
 }
 
+class NoRippleInteractionSource : MutableInteractionSource {
+    override val interactions: Flow<Interaction> = emptyFlow()
+    override suspend fun emit(interaction: Interaction) {}
+    override fun tryEmit(interaction: Interaction): Boolean = true
+}
+
 @Composable
 fun CwrNavigationSuiteScaffold(
     navigationSuiteItems: CwrNavigationSuiteScope.() -> Unit,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
-    isTopLevelDestination: Boolean,
     content: @Composable () -> Unit,
 ) {
     val layoutType = NavigationSuiteScaffoldDefaults
@@ -144,18 +155,22 @@ fun CwrNavigationSuiteScaffold(
             unselectedTextColor = CwrNavigationDefaults.navigationContentColor(),
         ),
     )
+    val interactionSource = remember { NoRippleInteractionSource() }
      NavigationSuiteScaffold(
             navigationSuiteItems = {
                 CwrNavigationSuiteScope(
                     navigationSuiteScope = this,
                     navigationSuiteItemColors = navigationSuiteItemColors,
+                    interactionSource = interactionSource
                 ).run(navigationSuiteItems)
             },
             layoutType = layoutType,
-            containerColor = materialColor().surface,
+//            containerColor = materialColor().background,
             navigationSuiteColors = NavigationSuiteDefaults.colors(
                 navigationBarContentColor = CwrNavigationDefaults.navigationContentColor(),
-                navigationRailContainerColor = materialColor().surface,
+                navigationRailContainerColor = materialColor().background,
+                navigationBarContainerColor = materialColor().background,
+                navigationDrawerContainerColor = materialColor().background,
             ),
             modifier = modifier,
         ) {
@@ -166,6 +181,7 @@ fun CwrNavigationSuiteScaffold(
 class CwrNavigationSuiteScope internal constructor(
     private val navigationSuiteScope: NavigationSuiteScope,
     private val navigationSuiteItemColors: NavigationSuiteItemColors,
+    private val interactionSource: MutableInteractionSource = MutableInteractionSource(),
 ) {
     fun item(
         selected: Boolean,
@@ -174,6 +190,7 @@ class CwrNavigationSuiteScope internal constructor(
         icon: @Composable () -> Unit,
         selectedIcon: @Composable () -> Unit = icon,
         label: @Composable (() -> Unit)? = null,
+//        interactionSource: MutableInteractionSource = MutableInteractionSource(),
     )  = navigationSuiteScope.item(
         selected = selected,
         onClick = onClick,
@@ -187,6 +204,7 @@ class CwrNavigationSuiteScope internal constructor(
         label = label,
         colors = navigationSuiteItemColors,
         modifier = modifier,
+        interactionSource = interactionSource
     )
 }
 

@@ -2,8 +2,6 @@ package com.codewithrish.pdfreader.ui.screen.document_viewer.viewer.pdf
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -38,7 +36,7 @@ fun PdfViewTopBar(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-            .background(materialColor().background)
+//            .background(materialColor().background)
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.Start, // Align everything to start
         verticalAlignment = Alignment.CenterVertically

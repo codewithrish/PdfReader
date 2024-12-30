@@ -8,11 +8,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -44,23 +48,21 @@ fun MergePdfScreen(
         topBar = {
             MergePdfTopBar(
                 state = state,
-                goBack = goBack
+                goBack = goBack,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
             )
         },
         content = { paddingValues ->
             CwrContentBox(
-                modifier = modifier
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding()
-                    )
-                    .fillMaxSize(),
+                modifier = modifier.fillMaxSize(),
+                paddingValues = paddingValues,
                 contentAlignment = Alignment.TopCenter
             ) {
                 state.mergedPdfDocument?.let {
                     DocumentDetails(
                         document = state.mergedPdfDocument,
-                        modifier = Modifier.padding(bottom = 8.dp)
                     )
                 } ?: run {
                     LazyColumn(
@@ -82,7 +84,10 @@ fun MergePdfScreen(
         bottomBar = {
             MergePdfBottomBar(
                 state = state,
-                onEvent = onEvent
+                onEvent = onEvent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()),
             )
         }
     )
@@ -125,7 +130,7 @@ fun MergePdfBottomBar(
     modifier: Modifier = Modifier
 ) {
     Row (
-        modifier = modifier
+        modifier = Modifier
             .shadow(elevation = 8.dp, shape = Shape.noCornerShape)
             .background(color = materialColor().surface)
             .fillMaxWidth()

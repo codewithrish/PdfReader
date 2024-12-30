@@ -4,10 +4,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -28,22 +32,34 @@ fun SettingsScreen(
     Scaffold (
         topBar = {
             SettingsTopBar(
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
                 goBack = goBack
             )
         },
-        content = {
+        content = { paddingValues ->
             Box(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(it),
+                    .padding(
+                        paddingValues
+//                        top = paddingValues.calculateTopPadding(),
+//                        bottom = paddingValues.calculateBottomPadding()
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 CwrText("Settings Screen")
             }
+        },
+        bottomBar = {
+            SettingsBottomBar(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(WindowInsets.systemBars.asPaddingValues()),
+            )
         }
     )
-
 }
 
 @Composable
@@ -53,7 +69,8 @@ fun SettingsTopBar(
 ) {
     Row(
         modifier = modifier
-            .height(56.dp).padding(horizontal = 16.dp),
+            .height(56.dp)
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -66,8 +83,15 @@ fun SettingsTopBar(
         CwrText(
             text = "Settings",
             style = materialTextStyle().titleLarge,
-            modifier = modifier.weight(1f),
+            modifier = Modifier.weight(1f),
             textAlign = TextAlign.Start
         )
     }
+}
+
+@Composable
+fun SettingsBottomBar(
+    modifier: Modifier = Modifier
+) {
+
 }

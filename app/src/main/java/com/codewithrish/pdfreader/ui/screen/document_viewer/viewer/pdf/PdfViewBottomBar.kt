@@ -24,7 +24,6 @@ import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiEvent
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiState
 import com.codewithrish.pdfreader.ui.theme.Shape
-import com.codewithrish.pdfreader.ui.theme.materialColor
 import com.codewithrish.pdfreader.ui.theme.materialTextStyle
 
 @Composable
@@ -45,8 +44,8 @@ fun PdfViewBottomBar(
         state = lazyListState,
         modifier = modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .background(materialColor().background),
+            .height(70.dp),
+//            .background(materialColor().background),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {

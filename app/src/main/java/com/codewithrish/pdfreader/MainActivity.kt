@@ -18,6 +18,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.codewithrish.pdfreader.MainUiState.Loading
 import com.codewithrish.pdfreader.MainUiState.Success
 import com.codewithrish.pdfreader.core.analytics.AnalyticsHelper
@@ -25,16 +28,26 @@ import com.codewithrish.pdfreader.core.analytics.LocalAnalyticsHelper
 import com.codewithrish.pdfreader.core.data.util.TimeZoneMonitor
 import com.codewithrish.pdfreader.core.model.DarkThemeConfig
 import com.codewithrish.pdfreader.core.model.ThemeBrand
+import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.ui.LocalTimeZone
+import com.codewithrish.pdfreader.navigation.wrapper.animatedComposable
 import com.codewithrish.pdfreader.ui.CwrApp
+import com.codewithrish.pdfreader.ui.DashboardGraphRoute
 import com.codewithrish.pdfreader.ui.permission.StoragePermissionManager
 import com.codewithrish.pdfreader.ui.rememberCwrAppState
+import com.codewithrish.pdfreader.ui.screen.document_viewer.documentScreen
+import com.codewithrish.pdfreader.ui.screen.selection.selectDocumentScreen
+import com.codewithrish.pdfreader.ui.screen.settings.settingsGraph
+import com.codewithrish.pdfreader.ui.screen.tools.ToolType
+import com.codewithrish.pdfreader.ui.screen.tools.merge_pdf.mergePdfScreen
+import com.codewithrish.pdfreader.ui.screen.tools.merge_pdf.navigateToMergePdf
+import com.codewithrish.pdfreader.ui.screen.tools.split_pdf.navigateToSplitPdf
+import com.codewithrish.pdfreader.ui.screen.tools.split_pdf.splitPdfScreen
 import com.codewithrish.pdfreader.ui.theme.PdfReaderTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 /**
@@ -99,6 +112,8 @@ class MainActivity : ComponentActivity() {
 
             val currentTimeZone by appState.currentTimeZone.collectAsStateWithLifecycle()
 
+            val rootNavController = rememberNavController()
+
             CompositionLocalProvider(
 //                LocalDarkThemePreferences provides darkTheme,
 //                LocalAnalyticsHelper provides NoOpAnalyticsHelper.provides(),
@@ -113,12 +128,51 @@ class MainActivity : ComponentActivity() {
                 ) {
                     StoragePermissionManager(
                         onPermissionGranted = {
-                            CwrApp(appState)
+                            NavHost(
+                                navController = rootNavController,
+                                startDestination = DashboardGraphRoute
+                            ) {
+                                animatedComposable<DashboardGraphRoute>() {
+                                    CwrApp(rootNavController, appState)
+                                }
+//                                documentScreen(goBack = rootNavController::navigateUp)
+//                                settingsGraph(goBack = rootNavController::navigateUp)
+
+                                documentScreen(goBack = rootNavController::navigateUp)
+                                // Select File
+                                selectDocumentScreen(
+                                    goBack = rootNavController::navigateUp,
+                                    goToToolScreen = rootNavController::navigateToTool
+                                )
+                                // Tools Screen
+                                splitPdfScreen(goBack = rootNavController::navigateUp)
+                                mergePdfScreen(goBack = rootNavController::navigateUp)
+                                // Settings
+                                settingsGraph(goBack = rootNavController::navigateUp)
+                            }
+//                            CwrApp(appState)
                         }
                     )
                 }
             }
         }
+    }
+}
+
+fun NavController.navigateToTool(toolType: ToolType, document: Document? = null, selectedDocumentIds: List<Long>? = null) {
+    when (toolType) {
+        ToolType.SPLIT_PDF -> {
+            document?.let {
+                navigateToSplitPdf(document.id)
+            }
+        }
+        ToolType.MERGE_PDF -> {
+            selectedDocumentIds?.let {
+                navigateToMergePdf(selectedDocumentIds)
+            }
+        }
+        ToolType.IMAGE_TO_PDF -> {}
+        ToolType.DEFAULT -> {}
     }
 }
 

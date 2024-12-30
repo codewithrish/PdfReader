@@ -11,11 +11,15 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -91,16 +95,17 @@ fun SplitPdfScreen(
             SplitPdfTopBar(
                 state = state,
                 onEvent = onEvent,
-                goBack = goBack
+                goBack = goBack,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
             )
         },
         content = { paddingValues ->
             if (state.splitPdfDocuments.isNotEmpty()) {
                 CwrContentBox(
-                    modifier = modifier.padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding()
-                    ).fillMaxSize()
+                    modifier = modifier.fillMaxSize(),
+                    paddingValues = paddingValues
                 ) {
                     LazyColumn {
                         items(
@@ -116,16 +121,14 @@ fun SplitPdfScreen(
                 }
             } else {
                 CwrContentBox(
-                    modifier = modifier.padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding()
-                    )
+                    modifier = modifier.fillMaxSize(),
+                    paddingValues = paddingValues
                 ) {
                     Column {
                         state.document?.let { document ->
                             DocumentDetails(
                                 document = document,
-                                modifier = Modifier.padding(bottom = 16.dp),
+//                                modifier = Modifier.padding(bottom = 16.dp),
                             )
                             SplitPdfContent(
                                 state = state,
@@ -140,7 +143,10 @@ fun SplitPdfScreen(
             if (state.splitPdfDocuments.isEmpty()) {
                 SplitPdfBottomBar(
                     state = state,
-                    onEvent = onEvent
+                    onEvent = onEvent,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()),
                 )
             }
         }
@@ -237,7 +243,7 @@ fun SplitPdfBottomBar(
 ) {
 
     Row (
-        modifier = modifier
+        modifier = Modifier
             .shadow(elevation = 8.dp, shape = Shape.noCornerShape)
             .background(color = materialColor().surface)
             .fillMaxWidth()

@@ -58,7 +58,7 @@ fun PdfPagesGrid(
         columns = GridCells.Fixed(3),
         modifier = modifier
             .fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
+        contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
