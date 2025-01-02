@@ -16,7 +16,9 @@ interface DocumentsRepository {
     fun searchByName(searchQuery: String): Flow<List<DocumentEntity>>
     suspend fun insertDocument(user: DocumentEntity)
     suspend fun updateBookmark(id: Long, bookmarked: Boolean)
+    // Delete Document
     suspend fun delete(id: Long)
+    suspend fun deleteByUri(uri: String)
     // Bookmark
     fun getBookmarkedDocuments(): Flow<List<DocumentEntity>>
     suspend fun updateBookmarkStatus(id: Long, isBookmarked: Boolean)
@@ -64,6 +66,10 @@ internal class DocumentsRepositoryImpl @Inject constructor(
 
     override suspend fun delete(id: Long) {
         return documentDao.delete(id)
+    }
+
+    override suspend fun deleteByUri(uri: String) {
+        return documentDao.deleteByUri(uri)
     }
 
     // Bookmark

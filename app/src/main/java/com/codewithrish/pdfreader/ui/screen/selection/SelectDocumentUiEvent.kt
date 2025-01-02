@@ -13,4 +13,5 @@ sealed class SelectDocumentUiEvent {
     // Selection
     data class SelectDocument(val document: Document): SelectDocumentUiEvent()
     data class UnSelectDocument(val document: Document): SelectDocumentUiEvent()
+    data class CheckFileExists(val uri: String): SelectDocumentUiEvent()
 }

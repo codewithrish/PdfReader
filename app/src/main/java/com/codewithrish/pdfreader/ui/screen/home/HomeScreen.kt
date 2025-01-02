@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -35,7 +36,6 @@ import com.codewithrish.pdfreader.ui.theme.materialColor
 import com.codewithrish.pdfreader.ui.theme.materialTextStyle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
 
 
 /**
@@ -83,10 +83,7 @@ fun HomeScreen(
                     state.documents.collectAsStateWithLifecycle(emptyList()).value.let { documents ->
                         if (documents.isNotEmpty()) {
                             documents.forEach { document ->
-                                val file = File(document.path)
-                                if (!file.exists()) {
-                                    onEvent(HomeUiEvent.DeleteDocument(document))
-                                }
+                                onEvent(HomeUiEvent.CheckFileExists(document.uri))
                             }.also {
                                 DocumentList(
                                     documents = documents

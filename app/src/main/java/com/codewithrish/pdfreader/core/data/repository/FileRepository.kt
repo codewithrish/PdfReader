@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.core.database.getLongOrNull
@@ -13,16 +14,19 @@ import com.codewithrish.pdfreader.ui.screen.home.DocumentType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
-interface LoadFilesRepository {
+interface FileRepository {
     suspend fun loadAllFilesToDatabase()
+    suspend fun checkFileExists(uri: String): Boolean
+//    suspend fun checkIfPdfIsPasswordProtected(uri: String): Boolean
 }
 
-internal class LoadFilesRepositoryImpl @Inject constructor(
+internal class FileRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val documentsRepository: DocumentsRepository,
-) : LoadFilesRepository {
+) : FileRepository {
 
     override suspend fun loadAllFilesToDatabase() {
         withContext(Dispatchers.IO) {
@@ -72,6 +76,10 @@ internal class LoadFilesRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun checkFileExists(uri: String): Boolean {
+        return doesFileExist(context, Uri.parse(uri))
+    }
+
     @SuppressLint("Recycle")
     private suspend fun getAllMediaFilesCursor(): Cursor? {
         return withContext(Dispatchers.IO) {
@@ -91,6 +99,35 @@ internal class LoadFilesRepositoryImpl @Inject constructor(
                 MediaStore.Files.getContentUri("external")
             }
             context.contentResolver.query(collection, projections, selection, mimeTypes.toTypedArray(), "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC")
+        }
+    }
+
+    // Function to detect whether file exists or not
+    private suspend fun doesFileExist(context: Context, uri: Uri): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                when (uri.scheme) {
+                    "file" -> {
+                        val file = File(uri.path ?: return@withContext false)
+                        file.exists()
+                    }
+                    "content" -> {
+                        try {
+                            val fileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
+                            fileDescriptor?.use {
+                                true
+                            } == true
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            false
+                        }
+                    }
+                    else -> false
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
         }
     }
 }

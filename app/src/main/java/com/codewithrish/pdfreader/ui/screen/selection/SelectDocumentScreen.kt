@@ -19,6 +19,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -36,7 +37,6 @@ import com.codewithrish.pdfreader.ui.screen.tools.ToolType
 import com.codewithrish.pdfreader.ui.theme.Shape
 import com.codewithrish.pdfreader.ui.theme.materialColor
 import com.codewithrish.pdfreader.ui.theme.materialTextStyle
-import java.io.File
 
 /**
  * [SelectDocumentViewModel]
@@ -84,10 +84,7 @@ fun SelectDocumentScreen(
                     state.documents.collectAsStateWithLifecycle(emptyList()).value.let { documents ->
                         if (documents.isNotEmpty()) {
                             documents.forEach { document ->
-                                val file = File(document.path)
-                                if (!file.exists()) {
-                                    onEvent(SelectDocumentUiEvent.DeleteDocument(document))
-                                }
+                                onEvent(SelectDocumentUiEvent.CheckFileExists(document.uri))
                             }.also {
                                 SelectDocumentContent(
                                     toolType = state.toolType,

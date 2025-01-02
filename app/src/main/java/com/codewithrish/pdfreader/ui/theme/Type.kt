@@ -3,10 +3,15 @@ package com.codewithrish.pdfreader.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.LineHeightStyle.Alignment
+import androidx.compose.ui.text.style.LineHeightStyle.Trim
+import androidx.compose.ui.unit.sp
 import com.codewithrish.pdfreader.R
 
 val provider = GoogleFont.Provider(

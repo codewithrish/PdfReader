@@ -3,6 +3,8 @@ package com.codewithrish.pdfreader.ui.screen.home
 import androidx.lifecycle.viewModelScope
 import com.codewithrish.pdfreader.core.common.BaseViewModel
 import com.codewithrish.pdfreader.core.common.network.DbResultState
+import com.codewithrish.pdfreader.core.domain.usecase.CheckFileExistsUseCase
+import com.codewithrish.pdfreader.core.domain.usecase.DeleteDocumentByUriUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.DeleteDocumentUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.GetAllDocumentsUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.LoadFilesToDbUseCase
@@ -21,7 +23,9 @@ class HomeViewModel @Inject constructor(
     private val getAllDocumentsUseCase: GetAllDocumentsUseCase,
     private val deleteDocumentUseCase: DeleteDocumentUseCase,
     private val updateBookmarkStatusUseCase: UpdateBookmarkStatusUseCase,
-    private val loadFilesUseCase: LoadFilesToDbUseCase
+    private val loadFilesUseCase: LoadFilesToDbUseCase,
+    private val checkFileExistsUseCase: CheckFileExistsUseCase,
+    private val deleteDocumentByUriUseCase: DeleteDocumentByUriUseCase,
 ) : BaseViewModel<HomeUiState, HomeUiEvent>() {
 
     override fun initState(): HomeUiState = HomeUiState()
@@ -47,6 +51,11 @@ class HomeViewModel @Inject constructor(
             is HomeUiEvent.OnBookmarkClick -> {
                 Timber.tag("HomeViewModel").d("OnBookmarkClick: $event")
                 updateBookmarkStatus(event.id, event.isBookmarked)
+            }
+
+            is HomeUiEvent.CheckFileExists -> {
+                Timber.tag("HomeViewModel").d("CheckFileExists: $event")
+                checkFileExists(event.uri)
             }
         }
     }
@@ -128,6 +137,38 @@ class HomeViewModel @Inject constructor(
                             isLoading = false,
                         )
                     }
+                }
+            }
+        }
+    }
+    
+    private fun checkFileExists(uri: String) {
+        viewModelScope.launch {
+            checkFileExistsUseCase(uri).collectLatest { result ->
+                when (result) {
+                    is DbResultState.Error -> {}
+                    DbResultState.Idle -> {}
+                    DbResultState.Loading -> {}
+                    is DbResultState.Success -> {
+                        if (!result.data) {
+                            deleteDocumentByUri(uri)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun deleteDocumentByUri(uri: String) {
+        viewModelScope.launch {
+            deleteDocumentByUriUseCase(uri).collectLatest { result ->
+                when (result) {
+                    is DbResultState.Error -> updateState {
+                        it.copy(errorMessage = Pair(it.errorMessage.first, result.error))
+                    }
+                    DbResultState.Idle -> {}
+                    DbResultState.Loading -> {}
+                    is DbResultState.Success -> {}
                 }
             }
         }

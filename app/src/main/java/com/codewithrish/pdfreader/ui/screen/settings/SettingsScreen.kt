@@ -2,7 +2,6 @@ package com.codewithrish.pdfreader.ui.screen.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -19,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.ui.theme.materialColor
@@ -39,17 +39,12 @@ fun SettingsScreen(
             )
         },
         content = { paddingValues ->
-            Box(
-                modifier = modifier
+            CwrContentBox(
+                modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        paddingValues
-//                        top = paddingValues.calculateTopPadding(),
-//                        bottom = paddingValues.calculateBottomPadding()
-                    ),
-                contentAlignment = Alignment.Center
+                    .padding(paddingValues)
             ) {
-                CwrText("Settings Screen")
+                SettingsContent()
             }
         },
         bottomBar = {

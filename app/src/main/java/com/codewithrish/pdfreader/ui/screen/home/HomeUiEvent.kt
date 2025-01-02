@@ -8,4 +8,5 @@ sealed class HomeUiEvent {
     data class OpenDocument(val document: Document): HomeUiEvent()
     data class DeleteDocument(val document: Document): HomeUiEvent()
     data class OnBookmarkClick(val id: Long, val isBookmarked: Boolean): HomeUiEvent()
+    data class CheckFileExists(val uri: String): HomeUiEvent()
 }

@@ -9,8 +9,14 @@ import android.provider.Settings
 import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +28,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import com.codewithrish.pdfreader.R
+import com.codewithrish.pdfreader.ui.theme.materialColor
 
 @Composable
 fun StoragePermissionManager(
@@ -101,11 +116,38 @@ fun StoragePermissionManager(
 
     if (!isPermissionGranted) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(materialColor().background),
             contentAlignment = Alignment.Center
         ) {
-            Button(onClick = { handlePermissionRequest() }) {
-                CwrText("Request Storage Permission")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.align(Alignment.Center)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.img_permission_placeholder),
+                    contentDescription = null,
+                    modifier = Modifier.size(240.dp)
+                )
+                CwrText(
+                    text = buildAnnotatedString {
+                        append("For your access to document & media files, ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("\"Open PDF\"")
+                        }
+                        append(" needs storage Permission")
+                    }.toString(),
+                    textAlign = TextAlign.Center,
+                    color = materialColor().onBackground,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+                Button(onClick = { handlePermissionRequest() }) {
+                    CwrText("Allow Storage permissions")
+                }
             }
         }
     } else {

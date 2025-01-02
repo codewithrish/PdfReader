@@ -25,7 +25,7 @@ ksp = "2.1.0-1.0.29"
 #Datastore
 androidxDataStore = "1.1.1"
 #Pdf Viewer
-bouquet = "1.1.2"
+#bouquet = "1.1.2"
 pdf-viewer-v = "3.2.0-beta.3"
 #Splash Screen
 androidxCoreSplashscreen = "1.0.1"
@@ -60,6 +60,8 @@ pdfboxAndroid = "2.0.27.0"
 lottieCompose = "6.0.1"
 #Coil
 coilCompose = "2.7.0"
+#Firebase App Distribution
+fadVersion = "5.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -106,7 +108,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-dataStore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
 
 #Pdf Viewer
-bouquet = { module = "io.github.grizzi91:bouquet", version.ref = "bouquet" }
+#bouquet = { module = "io.github.grizzi91:bouquet", version.ref = "bouquet" }
 pdf-viewer = { group = "com.github.mhiew", name="android-pdf-viewer", version.ref="pdf-viewer-v" }
 
 #Time Zone
@@ -118,8 +120,8 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 #Adaptive
 androidx-compose-material3-navigationSuite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite" }
 androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive" }
-#androidx-compose-material3-adaptive-layout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout" }
-#androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation" }
+androidx-compose-material3-adaptive-layout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout" }
+androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation" }
 
 #Serialization
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
@@ -176,3 +178,5 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 googleServices = { id = "com.google.gms.google-services", version.ref = "google-services" }
 #Kotlin Parcelize
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize",  version.ref = "kotlinPlugin" }
+#Firebase App Distribution
+firebase-app-distribution = { id = "com.google.firebase.appdistribution", version.ref = "fadVersion" }

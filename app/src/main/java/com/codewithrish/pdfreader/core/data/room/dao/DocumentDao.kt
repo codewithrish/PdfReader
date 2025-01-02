@@ -25,8 +25,11 @@ interface DocumentDao {
     suspend fun getDocumentsByIds(documentIds: List<Long>): List<DocumentEntity>
     @Query("UPDATE documents SET bookmarked = :bookmarked WHERE id = :id")
     suspend fun updateBookmark(id: Long, bookmarked: Boolean)
+    // Delete Document
     @Query("DELETE FROM documents WHERE id = :id")
     suspend fun delete(id: Long)
+    @Query("DELETE FROM documents WHERE uri = :uri")
+    suspend fun deleteByUri(uri: String)
     // Bookmark
     @Query("SELECT * FROM documents WHERE bookmarked = 1")
     fun getBookmarkedDocuments(): Flow<List<DocumentEntity>>

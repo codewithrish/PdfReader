@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.ui.theme.Shape
 import com.codewithrish.pdfreader.ui.theme.materialColor
-import com.codewithrish.pdfreader.ui.theme.materialShape
 
 @Composable
 fun CwrCardView(
@@ -25,7 +24,7 @@ fun CwrCardView(
     elevation: CardElevation = CardDefaults.cardElevation(),
     onClick: () -> Unit = {},
     shape: CornerBasedShape = Shape.large,
-    borderColor: Color = materialColor().outlineVariant,  // Added border color
+    borderColor: Color = materialColor().surfaceVariant,  // Added border color
     borderWidth: Dp = 1.dp,           // Added border width
     content: @Composable () -> Unit,
 ) {

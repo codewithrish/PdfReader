@@ -3,6 +3,8 @@ package com.codewithrish.pdfreader.ui.screen.selection
 import androidx.lifecycle.viewModelScope
 import com.codewithrish.pdfreader.core.common.BaseViewModel
 import com.codewithrish.pdfreader.core.common.network.DbResultState
+import com.codewithrish.pdfreader.core.domain.usecase.CheckFileExistsUseCase
+import com.codewithrish.pdfreader.core.domain.usecase.DeleteDocumentByUriUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.GetAllDocumentsUseCase
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.model.room.toDocument
@@ -21,6 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SelectDocumentViewModel @Inject constructor(
     private val getAllDocumentsUseCase: GetAllDocumentsUseCase,
+    private val checkFileExistsUseCase: CheckFileExistsUseCase,
+    private val deleteDocumentByUriUseCase: DeleteDocumentByUriUseCase,
 ) : BaseViewModel<SelectDocumentUiState, SelectDocumentUiEvent>() {
 
     override fun initState(): SelectDocumentUiState = SelectDocumentUiState()
@@ -48,6 +52,10 @@ class SelectDocumentViewModel @Inject constructor(
             is SelectDocumentUiEvent.UnSelectDocument -> {
                 Timber.tag("SelectDocumentViewModel").d("UnSelectDocument")
                 unSelectDocument(event.document)
+            }
+            is SelectDocumentUiEvent.CheckFileExists -> {
+                Timber.tag("SelectDocumentViewModel").d("CheckFileExists")
+                checkFileExists(event.uri)
             }
         }
     }
@@ -103,6 +111,38 @@ class SelectDocumentViewModel @Inject constructor(
             it.copy(
                 selectedDocuments = it.selectedDocuments - document
             )
+        }
+    }
+
+    private fun checkFileExists(uri: String) {
+        viewModelScope.launch {
+            checkFileExistsUseCase(uri).collectLatest { result ->
+                when (result) {
+                    is DbResultState.Error -> {}
+                    DbResultState.Idle -> {}
+                    DbResultState.Loading -> {}
+                    is DbResultState.Success -> {
+                        if (!result.data) {
+                            deleteDocumentByUri(uri)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun deleteDocumentByUri(uri: String) {
+        viewModelScope.launch {
+            deleteDocumentByUriUseCase(uri).collectLatest { result ->
+                when (result) {
+                    is DbResultState.Error -> updateState {
+                        it.copy(errorMessage = Pair(it.errorMessage.first, result.error))
+                    }
+                    DbResultState.Idle -> {}
+                    DbResultState.Loading -> {}
+                    is DbResultState.Success -> {}
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@ package com.codewithrish.pdfreader.core.data.di
 
 import com.codewithrish.pdfreader.core.data.repository.DocumentsRepository
 import com.codewithrish.pdfreader.core.data.repository.DocumentsRepositoryImpl
-import com.codewithrish.pdfreader.core.data.repository.LoadFilesRepository
-import com.codewithrish.pdfreader.core.data.repository.LoadFilesRepositoryImpl
+import com.codewithrish.pdfreader.core.data.repository.FileRepository
+import com.codewithrish.pdfreader.core.data.repository.FileRepositoryImpl
 import com.codewithrish.pdfreader.core.data.repository.PdfOperationsRepository
 import com.codewithrish.pdfreader.core.data.repository.PdfOperationsRepositoryImpl
 import com.codewithrish.pdfreader.core.data.repository.UserDataRepository
@@ -30,8 +30,8 @@ abstract class DataModule {
 
     @Binds
     internal abstract fun bindsLoadFilesRepository(
-        loadFilesRepository: LoadFilesRepositoryImpl
-    ): LoadFilesRepository
+        loadFilesRepository: FileRepositoryImpl
+    ): FileRepository
 
     @Binds
     internal abstract fun bindsPdfOperationsRepository(

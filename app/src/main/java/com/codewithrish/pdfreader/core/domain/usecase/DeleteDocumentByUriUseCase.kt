@@ -5,16 +5,18 @@ import com.codewithrish.pdfreader.core.common.network.DbResultState.Idle
 import com.codewithrish.pdfreader.core.common.network.DbResultState.Loading
 import com.codewithrish.pdfreader.core.common.network.DbResultState.Success
 import com.codewithrish.pdfreader.core.common.util.safeDbCall
-import com.codewithrish.pdfreader.core.data.repository.FileRepository
+import com.codewithrish.pdfreader.core.data.repository.DocumentsRepository
 import kotlinx.coroutines.flow.channelFlow
 import javax.inject.Inject
 
-class LoadFilesToDbUseCase @Inject constructor(
-    private val fileRepository: FileRepository
+class DeleteDocumentByUriUseCase @Inject constructor(
+    private val documentsRepository: DocumentsRepository
 ) {
-    operator fun invoke() = channelFlow {
+    operator fun invoke(
+        uri: String
+    ) = channelFlow {
         send(Loading)
-        val result = safeDbCall { fileRepository.loadAllFilesToDatabase() }
+        val result = safeDbCall { documentsRepository.deleteByUri(uri) }
         when (result) {
             is Error -> send(Error(result.error))
             is Success -> send(Success(result.data))

@@ -1,3 +1,4 @@
+import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import org.gradle.internal.extensions.stdlib.capitalized
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -12,6 +13,7 @@ plugins {
     alias(libs.plugins.googleServices)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.firebase.app.distribution)
 }
 
 android {
@@ -29,13 +31,31 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotesFile = "releasenotes.txt"
+                testers = "hackdeveloper1027@gmail.com, merahulroshan@gmail.com, ashish.chauhan480@gmail.com"
+            }
+        }
+        getByName("debug") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotesFile = "releasenotes.txt"
+                testers = "hackdeveloper1027@gmail.com, merahulroshan@gmail.com, ashish.chauhan480@gmail.com"
+            }
         }
     }
 
@@ -142,6 +162,8 @@ dependencies {
     // Adaptive
     implementation(libs.androidx.compose.material3.navigationSuite)
     implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.compose.material3.adaptive.layout)
+    implementation(libs.androidx.compose.material3.adaptive.navigation)
 
     // Material Icons
     implementation(libs.androidx.compose.material.iconsExtended)
@@ -196,4 +218,32 @@ dependencies {
     // Animated Navigation
 //    implementation ("androidx.compose.animation:animation:1.7.5")
 
+}
+
+// Using Terminal
+//    ./gradlew assembleRelease
+//    ./gradlew appDistributionUploadRelease
+
+// Debug
+tasks.register("releaseAndDistributeDebug") {
+    group = "distribution"
+    description = "Builds the release APK and uploads it to Firebase App Distribution."
+
+    dependsOn("assembleDebug", "appDistributionUploadDebug")
+
+    doLast {
+        println("Release build assembled and uploaded to Firebase App Distribution!")
+    }
+}
+
+// Release
+tasks.register("releaseAndDistributeRelease") {
+    group = "distribution"
+    description = "Builds the release APK and uploads it to Firebase App Distribution."
+
+    dependsOn("assembleRelease", "appDistributionUploadRelease")
+
+    doLast {
+        println("Release build assembled and uploaded to Firebase App Distribution!")
+    }
 }
