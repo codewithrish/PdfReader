@@ -1,6 +1,7 @@
 package com.codewithrish.pdfreader.core.data.repository
 
 import com.codewithrish.pdfreader.core.datastore.CwrPreferencesDataSource
+import com.codewithrish.pdfreader.core.model.AppLanguage
 import com.codewithrish.pdfreader.core.model.DarkThemeConfig
 import com.codewithrish.pdfreader.core.model.ThemeBrand
 import com.codewithrish.pdfreader.core.model.UserData
@@ -13,6 +14,7 @@ interface UserDataRepository {
     suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig)
     suspend fun setDynamicColorPreference(useDynamicColor: Boolean)
     suspend fun setShouldHideOnboarding(shouldHideOnboarding: Boolean)
+    suspend fun setAppLanguage(appLanguage: AppLanguage)
 }
 
 internal class UserDataRepositoryImpl @Inject constructor(
@@ -35,5 +37,9 @@ internal class UserDataRepositoryImpl @Inject constructor(
 
     override suspend fun setShouldHideOnboarding(shouldHideOnboarding: Boolean) {
         cwrPreferencesDataSource.setShouldHideOnboarding(shouldHideOnboarding)
+    }
+
+    override suspend fun setAppLanguage(appLanguage: AppLanguage) {
+        cwrPreferencesDataSource.setAppLanguage(appLanguage)
     }
 }

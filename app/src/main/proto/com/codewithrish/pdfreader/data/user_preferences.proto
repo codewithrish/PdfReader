@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "com/codewithrish/pdfreader/data/dark_theme_config.proto";
 import "com/codewithrish/pdfreader/data/theme_brand.proto";
+import "com/codewithrish/pdfreader/data/app_language.proto";
 
 option java_package = "com.codewithrish.pdfreader.core.datastore";
 option java_multiple_files = true;
@@ -11,6 +12,10 @@ message UserPreferences {
   bool should_hide_onboarding = 1;
   bool use_dynamic_color = 2;
 
+  // Theme
   ThemeBrandProto theme_brand = 3;
   DarkThemeConfigProto dark_theme_config = 4;
+
+  // Language
+  AppLanguageProto app_language = 5;
 }

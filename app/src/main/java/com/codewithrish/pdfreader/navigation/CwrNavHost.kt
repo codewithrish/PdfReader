@@ -30,7 +30,13 @@ fun CwrNavHost(
             onDocumentClick = rootNavController::navigateToViewDocument,
             onSettingsClick = rootNavController::navigateToSettings
         )
-        bookmarksScreen(onDocumentClick = rootNavController::navigateToViewDocument)
-        toolsSection(onToolClick = rootNavController::navigateToSelectDocument)
+        bookmarksScreen(
+            onDocumentClick = rootNavController::navigateToViewDocument,
+            onSettingsClick = rootNavController::navigateToSettings
+        )
+        toolsSection(
+            onToolClick = rootNavController::navigateToSelectDocument,
+            onSettingsClick = rootNavController::navigateToSettings
+        )
     }
 }

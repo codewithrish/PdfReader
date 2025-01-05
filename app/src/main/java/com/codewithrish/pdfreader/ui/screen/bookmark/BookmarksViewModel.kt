@@ -43,6 +43,11 @@ class BookmarksViewModel @Inject constructor(
                 Timber.tag("BookmarksViewModel").d("DeleteDocument")
                 deleteDocument(event.document)
             }
+
+            is BookmarksUiEvent.OnThreeDotClick -> {
+                Timber.tag("BookmarksViewModel").d("OnThreeDotClick")
+//                updateState { it.copy(isThreeDotMenuVisible = !it.isThreeDotMenuVisible) }
+            }
         }
     }
 

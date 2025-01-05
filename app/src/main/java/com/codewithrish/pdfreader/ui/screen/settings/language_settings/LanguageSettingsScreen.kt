@@ -1,4 +1,4 @@
-package com.codewithrish.pdfreader.ui.screen.settings
+package com.codewithrish.pdfreader.ui.screen.settings.language_settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,37 +16,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.codewithrish.pdfreader.BuildConfig
 import com.codewithrish.pdfreader.R
-import com.codewithrish.pdfreader.core.designsystem.component.CwrAlertDialog
 import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
+import com.codewithrish.pdfreader.ui.screen.settings.SettingsUiEvent
+import com.codewithrish.pdfreader.ui.screen.settings.SettingsUiState
 import com.codewithrish.pdfreader.ui.theme.materialColor
 import com.codewithrish.pdfreader.ui.theme.materialTextStyle
-import com.codewithrish.pdfreader.ui.util.ShowAppVersion
-import com.codewithrish.pdfreader.ui.util.launchCustomTab
-import com.codewithrish.pdfreader.ui.util.openPlayStoreForRating
-import com.codewithrish.pdfreader.ui.util.shareApp
 
 @Composable
-fun SettingsScreen(
+fun LanguageSettingsScreen(
     state: SettingsUiState = SettingsUiState(),
     onEvent: (SettingsUiEvent) -> Unit,
     modifier: Modifier = Modifier,
-    goToThemeSettings: () -> Unit,
-    goToLanguageSettings: () -> Unit,
     goBack: () -> Unit,
 ) {
-    val context = LocalContext.current
-
     Scaffold (
         topBar = {
-            SettingsTopBar(
+            LanguageSettingsTopBar(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(WindowInsets.statusBars.asPaddingValues()),
@@ -57,43 +48,17 @@ fun SettingsScreen(
             CwrContentBox(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
             ) {
-                state.appVersion?.let { appVersion ->
-                    context.ShowAppVersion(appVersion)
-                    CwrAlertDialog(
-                        title = "App Version",
-                        description = "Version $appVersion Build ${BuildConfig.VERSION_CODE}",
-                        confirmButtonText = "OK",
-                        cancelButtonText = "Cancel",
-                        positiveClick = {
-                            onEvent(SettingsUiEvent.AppVersionClick(appVersion = null))
-                        }
-                    )
-                }
-                SettingsContent(
-                    goToThemeSettings = goToThemeSettings,
-                    goToLanguageSettings = goToLanguageSettings,
-                    openPlayStoreForRating = {
-                        context.openPlayStoreForRating()
-                        onEvent(SettingsUiEvent.RateUsClick)
-                    },
-                    shareAppClick = {
-                        context.shareApp()
-                        onEvent(SettingsUiEvent.ShareAppClick)
-                    },
-                    privacyPolicyClick = {
-                        context.launchCustomTab("https://www.google.com")
-                        onEvent(SettingsUiEvent.PrivacyPolicyClick)
-                    },
-                    appVersionClick = {
-                        onEvent(SettingsUiEvent.AppVersionClick(appVersion = BuildConfig.VERSION_NAME))
-                    }
+                LanguageSettingsContent(
+                    state = state,
+                    onEvent = onEvent
                 )
             }
         },
         bottomBar = {
-            SettingsBottomBar(
+            LanguageSettingsBottomBar(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(WindowInsets.systemBars.asPaddingValues()),
@@ -103,7 +68,7 @@ fun SettingsScreen(
 }
 
 @Composable
-fun SettingsTopBar(
+fun LanguageSettingsTopBar(
     modifier: Modifier = Modifier,
     goBack: () -> Unit,
 ) {
@@ -121,7 +86,7 @@ fun SettingsTopBar(
             modifier = Modifier.clickable { goBack() }
         )
         CwrText(
-            text = stringResource(R.string.settings),
+            text = stringResource(R.string.language_settings),
             style = materialTextStyle().titleLarge,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Start
@@ -130,7 +95,7 @@ fun SettingsTopBar(
 }
 
 @Composable
-fun SettingsBottomBar(
+fun LanguageSettingsBottomBar(
     modifier: Modifier = Modifier
 ) {
 

@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import com.codewithrish.pdfreader.core.model.UserData
 import com.codewithrish.pdfreader.core.model.ThemeBrand
 import com.codewithrish.pdfreader.core.model.DarkThemeConfig
+import com.codewithrish.pdfreader.core.model.AppLanguage
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -35,6 +36,12 @@ class CwrPreferencesDataSource @Inject constructor(
                 },
                 useDynamicColor = it.useDynamicColor,
                 shouldHideOnboarding = it.shouldHideOnboarding,
+                appLanguage = when (it.appLanguage) {
+                    null,
+                    AppLanguageProto.UNRECOGNIZED,
+                    AppLanguageProto.ENGLISH, -> AppLanguage.ENGLISH
+                    AppLanguageProto.HINDI -> AppLanguage.HINDI
+                }
             )
         }
 
@@ -71,6 +78,17 @@ class CwrPreferencesDataSource @Inject constructor(
     suspend fun setShouldHideOnboarding(shouldHideOnboarding: Boolean) {
         userPreferences.updateData {
             it.copy { this.shouldHideOnboarding = shouldHideOnboarding }
+        }
+    }
+
+    suspend fun setAppLanguage(appLanguage: AppLanguage) {
+        userPreferences.updateData {
+            it.copy {
+                this.appLanguage = when(appLanguage) {
+                    AppLanguage.ENGLISH -> AppLanguageProto.ENGLISH
+                    AppLanguage.HINDI -> AppLanguageProto.HINDI
+                }
+            }
         }
     }
 }

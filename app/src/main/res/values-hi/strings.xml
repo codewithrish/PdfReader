@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ओपन पीडीएफ</string>
+    <string name="feature_home">होम</string>
+    <string name="feature_bookmark">बुकमार्क</string>
+    <string name="feature_tools">टूल्स</string>
+
+    <string name="language_settings">भाषा सेटिंग्स</string>
+    <string name="settings">सेटिंग्स</string>
+    <string name="yes">हाँ</string>
+    <string name="no">नहीं</string>
+    <string name="theme">थीम</string>
+    <string name="select_theme">थीम चुनें</string>
+    <string name="use_dynamic_theme">डायनामिक थीम का उपयोग करें</string>
+    <string name="matches_your_wallpaper_colors">(अपने फ़ोन वॉलपेपर से मिलान करें)</string>
+    <string name="language">भाषा</string>
+    <string name="share_with_your_friends">अपने दोस्तों के साथ साझा करें</string>
+    <string name="rate_us">हमें रेटिंग दें</string>
+    <string name="privacy_policy">प्राइवेसी पालिसी</string>
+    <string name="app_version">एप्लिकेशन वेरीज़न</string>
+    <string name="light">लाइट</string>
+    <string name="dark">डार्क</string>
+    <string name="system_default">सिस्टम डिफ़ॉल्ट</string>
+    <string name="theme_settings">थीम सेटिंग्स</string>
+    <string name="split_pdf">स्प्लिट पीडीएफ</string>
+    <string name="merge_pdf">मर्ज पीडीएफ</string>
+    <string name="excel_to_pdf">एक्सेल से पीडीएफ</string>
+    <string name="text_to_pdf">टेक्स्ट से पीडीएफ</string>
+    <string name="delete_pages">डिलीट पेज</string>
+    <string name="rotate_pages">पेज घुमाएँ</string>
+    <string name="image_to_pdf">इमेज से पीडीएफ</string>
+    <string name="share_app_message">ओपन पीडीएफ - अपने पीडीएफ दस्तावेजों को आसानी से खोलने और प्रबंधित करने के लिए अद्भुत ऐप! 📄✨अभी डाउनलोड करें:</string>
+    <string name="share_app_bottomsheet_title">ओपन पीडीएफ साझा करें के माध्यम से</string>
+</resources>

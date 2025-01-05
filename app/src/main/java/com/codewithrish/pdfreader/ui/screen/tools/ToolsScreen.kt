@@ -1,5 +1,6 @@
 package com.codewithrish.pdfreader.ui.screen.tools
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,7 +12,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.codewithrish.pdfreader.R
 import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
@@ -25,11 +28,15 @@ fun ToolsScreen(
     state: ToolsUiState,
     onEvent: (ToolsUiEvent) -> Unit,
     onToolClick: (ToolType) -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold (
         topBar = {
-            ToolsTopBar(modifier = Modifier.fillMaxWidth())
+            ToolsTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                onSettingsClick = onSettingsClick
+            )
         },
         content = { paddingValues ->
             CwrContentBox(paddingValues = PaddingValues(top = paddingValues.calculateTopPadding(), bottom = 0.dp)) {
@@ -46,15 +53,17 @@ fun ToolsScreen(
 @Composable
 fun ToolsTopBar(
     modifier: Modifier = Modifier,
+    onSettingsClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
-            .height(56.dp).padding(horizontal = 16.dp),
+            .height(56.dp)
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         CwrText(
-            text = "Tools",
+            text = stringResource(R.string.feature_tools),
             style = materialTextStyle().titleLarge,
             modifier = Modifier.weight(1f)
         )
@@ -69,6 +78,9 @@ fun ToolsTopBar(
                 imageVector = CwrIcons.Settings,
                 contentDescription = "",
                 tint = materialColor().onSurface,
+                modifier = Modifier.clickable {
+                    onSettingsClick()
+                }
             )
         }
     }

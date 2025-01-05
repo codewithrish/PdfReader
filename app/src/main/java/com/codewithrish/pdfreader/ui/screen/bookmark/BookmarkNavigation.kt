@@ -18,6 +18,7 @@ fun NavController.navigateToBookmarks(navOptions: NavOptions) =
 
 fun NavGraphBuilder.bookmarksScreen(
     onDocumentClick: (Document) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     composable<BookmarksRoute>() {
         val bookmarksViewModel: BookmarksViewModel = hiltViewModel()
@@ -28,7 +29,8 @@ fun NavGraphBuilder.bookmarksScreen(
             BookmarksScreen(
                 state = bookmarksUiState,
                 onEvent = bookmarksUiEvent,
-                onDocumentClick = onDocumentClick
+                onDocumentClick = onDocumentClick,
+                onSettingsClick = onSettingsClick
             )
         }
     }

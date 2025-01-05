@@ -59,6 +59,7 @@ fun DocumentDetails(
     modifier: Modifier = Modifier,
     onDocumentClick: (Document) -> Unit = {},
     optionOneClick: (Long, Boolean) -> Unit = { _, _ -> },
+    optionTwoClick: (Long) -> Unit = { },
 ) {
     var bookmarkOffset by remember { mutableStateOf(Offset.Zero) }
     var animationKey by remember { mutableIntStateOf(0) }
@@ -160,7 +161,7 @@ fun DocumentDetails(
                         .clip(Shape.small)
                         .background(Color.Transparent)
                         .clickable(
-                            onClick = { /* Action */ },
+                            onClick = { optionTwoClick(document.id) },
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ),

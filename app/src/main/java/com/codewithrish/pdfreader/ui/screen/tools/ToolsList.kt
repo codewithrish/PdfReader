@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.codewithrish.pdfreader.R
@@ -136,43 +137,43 @@ fun toolsList(isDarkMode: Boolean): List<Tool> {
     return listOf(
         Tool(
             image = R.drawable.img_split,
-            featureName = "Split Pdf",
+            featureName = stringResource(R.string.split_pdf),
             toolType = ToolType.SPLIT_PDF,
             backgroundColors = if (isDarkMode) backgroundColorsDark() else backgroundColorsLight()
         ),
         Tool(
             image = R.drawable.img_merge,
-            featureName = "Merge Pdf",
+            featureName = stringResource(R.string.merge_pdf),
             toolType = ToolType.MERGE_PDF,
             backgroundColors = if (isDarkMode) backgroundColorsMergeDark() else backgroundColorsMergeLight()
         ),
         Tool(
             image = R.drawable.img_excel,
-            featureName = "Excel to Pdf",
+            featureName = stringResource(R.string.excel_to_pdf),
             toolType = ToolType.MERGE_PDF,
             backgroundColors = if (isDarkMode) backgroundColorsExcelDark() else backgroundColorsExcelLight()
         ),
         Tool(
             image = R.drawable.img_txt,
-            featureName = "Text to Pdf",
+            featureName = stringResource(R.string.text_to_pdf),
             toolType = ToolType.MERGE_PDF,
             backgroundColors = if (isDarkMode) backgroundColorsTextDark() else backgroundColorsTextLight()
         ),
         Tool(
             image = R.drawable.img_delete_pages,
-            featureName = "Delete Pages",
+            featureName = stringResource(R.string.delete_pages),
             toolType = ToolType.MERGE_PDF,
             backgroundColors = if (isDarkMode) backgroundColorsDeleteDark() else backgroundColorsDeleteLight()
         ),
         Tool(
             image = R.drawable.img_rotate_pages,
-            featureName = "Rotate Pages",
+            featureName = stringResource(R.string.rotate_pages),
             toolType = ToolType.MERGE_PDF,
             backgroundColors = if (isDarkMode) backgroundColorsRotateDark() else backgroundColorsRotateLight()
         ),
         Tool(
             image = R.drawable.img_img_to_pdf,
-            featureName = "Image To Pdf",
+            featureName = stringResource(R.string.image_to_pdf),
             toolType = ToolType.IMAGE_TO_PDF,
             backgroundColors = if (isDarkMode) backgroundColorsImageDark() else backgroundColorsImageLight()
         )

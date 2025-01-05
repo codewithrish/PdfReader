@@ -1,19 +1,17 @@
-package com.codewithrish.pdfreader.core.common.dialog
+package com.codewithrish.pdfreader.core.designsystem.component
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
-import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 
 @Composable
-fun CwrPermissionRationaleDialog(
+fun CwrAlertDialog(
     title: String,
     description: String,
     confirmButtonText: String,
     cancelButtonText: String,
-    dismissDialog: () -> Unit,
-    oneGrant: () -> Unit,
+    positiveClick: () -> Unit = {},
+    negativeClick: () -> Unit = {},
 ) {
     AlertDialog(
         onDismissRequest = { /* Handle dismiss */ },
@@ -21,16 +19,15 @@ fun CwrPermissionRationaleDialog(
         text = { CwrText(description) },
         confirmButton = {
             Button(onClick = {
-                oneGrant()
-                dismissDialog()
+                positiveClick()
             }) {
                 CwrText(confirmButtonText)
             }
         },
-        dismissButton = {
-            OutlinedButton (onClick = dismissDialog) {
-                CwrText(cancelButtonText)
-            }
-        }
+//        dismissButton = {
+//            OutlinedButton (onClick = negativeClick) {
+//                CwrText(cancelButtonText)
+//            }
+//        },
     )
 }

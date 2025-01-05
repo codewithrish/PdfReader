@@ -17,6 +17,7 @@ fun DocumentList(
     documents: List<Document>,
     onDocumentClick: (Document) -> Unit,
     onBookmarkClick: (Long, Boolean) -> Unit = {_, _ -> },
+    onThreeDotClick: (Long) -> Unit = { },
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -30,6 +31,7 @@ fun DocumentList(
                 document = document,
                 onDocumentClick = onDocumentClick,
                 optionOneClick = onBookmarkClick,
+                optionTwoClick = onThreeDotClick,
                 optionIconSize = 15.dp,
                 optionOneIcon = if (document.bookmarked) CwrIcons.BookmarkAdded else CwrIcons.BookmarkAdd,
                 optionTwoIcon = CwrIcons.Icon3Dots,

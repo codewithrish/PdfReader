@@ -19,6 +19,7 @@ fun NavController.navigateToTools(navOptions: NavOptions) =
 
 fun NavGraphBuilder.toolsSection(
     onToolClick: (ToolType) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     navigation<ToolsGraph>(startDestination = ToolsRoute) {
         composable<ToolsRoute>() {
@@ -30,7 +31,8 @@ fun NavGraphBuilder.toolsSection(
                 ToolsScreen(
                     state = toolsUiState,
                     onEvent = toolsUiEvent,
-                    onToolClick = onToolClick
+                    onToolClick = onToolClick,
+                    onSettingsClick = onSettingsClick
                 )
             }
         }

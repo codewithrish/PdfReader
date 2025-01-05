@@ -14,9 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.codewithrish.pdfreader.BuildConfig
+import com.codewithrish.pdfreader.R
 import com.codewithrish.pdfreader.core.designsystem.component.CwrCardView
 import com.codewithrish.pdfreader.core.designsystem.component.CwrHorizontalDivider
 import com.codewithrish.pdfreader.core.designsystem.component.CwrIcon
@@ -30,6 +35,12 @@ val cornerRadius = 16.dp
 
 @Composable
 fun SettingsContent(
+    goToThemeSettings: () -> Unit = {},
+    goToLanguageSettings: () -> Unit = {},
+    shareAppClick: () -> Unit = {},
+    openPlayStoreForRating: () -> Unit = {},
+    privacyPolicyClick: () -> Unit = {},
+    appVersionClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -38,41 +49,56 @@ fun SettingsContent(
             .padding(16.dp)
     ) {
         SettingItem(
-            title = "Theme",
+            title = stringResource(R.string.theme),
             startIcon = CwrIcons.LightTheme,
             endIcon = CwrIcons.ChevronRight,
-            shape = firstItemRoundedCornerShape()
+            shape = firstItemRoundedCornerShape(),
+            onClick = goToThemeSettings
         )
         SettingItem(
-            title = "Language",
+            title = stringResource(R.string.language),
             startIcon = CwrIcons.Language,
             endIcon = CwrIcons.ChevronRight,
-            shape = lastItemRoundedCornerShape()
+            shape = lastItemRoundedCornerShape(),
+            onClick = goToLanguageSettings
         )
         CwrHorizontalDivider(
             color = materialColor().surface
         )
         SettingItem(
-            title = "Share With Your Besties",
+            title = stringResource(R.string.share_with_your_friends),
             startIcon = CwrIcons.Share,
-//            endIcon = CwrIcons.ChevronRight,
-            shape = firstItemRoundedCornerShape()
+            shape = firstItemRoundedCornerShape(),
+            onClick = shareAppClick
         )
         SettingItem(
-            title = "Rate Us",
+            title = stringResource(R.string.rate_us),
             startIcon = CwrIcons.StarRate,
-            shape = middleItemRoundedCornerShape()
+            onClick = openPlayStoreForRating
         )
         SettingItem(
-            title = "Privacy Policy",
+            title = stringResource(R.string.privacy_policy),
             startIcon = CwrIcons.PrivacyPolicy,
-            endIcon = CwrIcons.Link
+            endIcon = CwrIcons.Link,
+            onClick = privacyPolicyClick
         )
         SettingItem(
-            title = "App Version",
+            title = stringResource(R.string.app_version),
             startIcon = CwrIcons.AppVersion,
-            endText = "v1.0.0",
-            shape = lastItemRoundedCornerShape()
+            endText = "v${BuildConfig.VERSION_NAME}",
+            shape = lastItemRoundedCornerShape(),
+            onClick = appVersionClick
+        )
+        CwrText(
+            text = "Made with ❤\uFE0F in India",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp),
+            textAlign = TextAlign.Center,
+            style = materialTextStyle().titleMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Bold
+            )
         )
     }
 }
