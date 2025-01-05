@@ -9,6 +9,7 @@ import com.codewithrish.pdfreader.core.domain.usecase.UpdateBookmarkStatusUseCas
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.model.room.toDocument
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -68,15 +69,18 @@ class BookmarksViewModel @Inject constructor(
                     is DbResultState.Loading -> updateState {
                         it.copy(isLoading = true)
                     }
-                    is DbResultState.Success -> updateState {
-                        it.copy(
-                            documents = result.data.map { documentEntities ->
-                                documentEntities.map { documentEntity ->
-                                    documentEntity.toDocument()
-                                }
-                            },
-                            isLoading = false,
-                        )
+                    is DbResultState.Success -> {
+                        val documents: Flow<List<Document>> = result.data.map { entityList ->
+                            entityList.orEmpty() // Handles null lists
+                                .filterNotNull() // Filters out null DocumentEntity
+                                .map { it.toDocument() } // Maps each DocumentEntity to Document
+                        }
+                        updateState {
+                            it.copy(
+                                documents = documents,
+                                isLoading = false,
+                            )
+                        }
                     }
                 }
             }

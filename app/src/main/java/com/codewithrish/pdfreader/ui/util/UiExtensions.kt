@@ -7,13 +7,15 @@ import android.content.res.Configuration
 import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.runtime.Composable
+import androidx.core.content.FileProvider
 import androidx.core.util.Consumer
 import com.codewithrish.pdfreader.R
+import com.codewithrish.pdfreader.core.model.home.Document
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
+import java.io.File
 
 /**
  * Convenience wrapper for dark mode checking
@@ -78,7 +80,36 @@ fun Context.launchCustomTab(url: String) {
     customTabsIntent.launchUrl(this, Uri.parse(url))
 }
 
-@Composable
-fun Context.ShowAppVersion(appVersion: String) {
+fun Context.sharePdf(
+    document: Document?,
+) {
+    document?.let {
+        val uri = FileProvider.getUriForFile(this, "${this.packageName}.provider", File(document.path))
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_TITLE, document.name)
+            putExtra(Intent.EXTRA_SUBJECT, document.name)
+            type = "application/pdf"
+        }
+        this.startActivity(Intent.createChooser(shareIntent, "Share PDF"))
+    }
+}
 
+fun Context.printPdf(document: Document?) {
+    document?.let {
+        val file = File(document.path)
+        val uri = FileProvider.getUriForFile(this, "${this.packageName}.provider", file)
+
+        val printManager = getSystemService(Context.PRINT_SERVICE) as? android.print.PrintManager
+        val jobName = "${getString(R.string.app_name)}: ${document.name}"
+
+        val printAdapter = PdfDocumentAdapter(this, uri)
+
+        printManager?.print(
+            jobName,
+            printAdapter,
+            android.print.PrintAttributes.Builder().build()
+        )
+    }
 }

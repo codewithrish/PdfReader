@@ -28,7 +28,6 @@ import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.ui.theme.materialColor
 import com.codewithrish.pdfreader.ui.theme.materialTextStyle
-import com.codewithrish.pdfreader.ui.util.ShowAppVersion
 import com.codewithrish.pdfreader.ui.util.launchCustomTab
 import com.codewithrish.pdfreader.ui.util.openPlayStoreForRating
 import com.codewithrish.pdfreader.ui.util.shareApp
@@ -60,7 +59,6 @@ fun SettingsScreen(
                     .padding(paddingValues)
             ) {
                 state.appVersion?.let { appVersion ->
-                    context.ShowAppVersion(appVersion)
                     CwrAlertDialog(
                         title = "App Version",
                         description = "Version $appVersion Build ${BuildConfig.VERSION_CODE}",

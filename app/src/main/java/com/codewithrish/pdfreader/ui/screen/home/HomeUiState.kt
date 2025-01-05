@@ -7,5 +7,7 @@ import kotlinx.coroutines.flow.emptyFlow
 data class HomeUiState (
     val isLoading: Boolean = true,
     val documents: Flow<List<Document>> = emptyFlow(),
+    val selectedDocumentForDetails: Flow<Document> = emptyFlow(),
+    val showHideDocumentOptions: Boolean = false,
     val errorMessage: Pair<String, String> = Pair("Home Screen Error", "Something went wrong")
 )

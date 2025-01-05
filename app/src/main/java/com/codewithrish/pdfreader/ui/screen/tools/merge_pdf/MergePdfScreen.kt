@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codewithrish.pdfreader.core.designsystem.component.CwrButton
 import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
@@ -65,17 +66,19 @@ fun MergePdfScreen(
                         document = state.mergedPdfDocument,
                     )
                 } ?: run {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        itemsIndexed(
-                            items = state.selectedDocuments,
-                            key = { index, document -> document.id }
-                        ) { index, document ->
-                            DocumentDetails(
-                                document = document,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
+                    state.selectedDocuments.collectAsStateWithLifecycle(emptyList()).value.let { selectedDocuments ->
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            itemsIndexed(
+                                items = selectedDocuments,
+                                key = { index, document -> document.id }
+                            ) { index, document ->
+                                DocumentDetails(
+                                    document = document,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -139,14 +142,15 @@ fun MergePdfBottomBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        val selectedDocuments = state.selectedDocuments.collectAsStateWithLifecycle(emptyList()).value
         CwrButton(
-            text = "Merge (${state.selectedDocuments.size}) Pdf Files",
-            enabled = state.selectedDocuments.isNotEmpty() && !state.isLoading,
+            text = "Merge (${state.selectedDocuments.collectAsStateWithLifecycle(emptyList()).value.size}) Pdf Files",
+            enabled = state.selectedDocuments.collectAsStateWithLifecycle(emptyList()).value.isNotEmpty() && !state.isLoading,
             modifier = modifier
                 .wrapContentHeight()
                 .weight(1f),
             onClick = {
-                onEvent(MergePdfUiEvent.MergePdf(state.selectedDocuments, "Merged File.pdf"))
+                onEvent(MergePdfUiEvent.MergePdf(selectedDocuments, "Merged File.pdf"))
             }
         )
         AnimatedVisibility(

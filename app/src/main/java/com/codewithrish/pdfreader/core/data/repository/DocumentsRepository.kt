@@ -8,30 +8,31 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface DocumentsRepository {
-    fun getAllDocuments(): Flow<List<DocumentEntity>>
-    fun getDocumentsByMimeType(mimeType: String): Flow<List<DocumentEntity>>
+    fun getAllDocuments(): Flow<List<DocumentEntity?>?>
+    fun getDocumentsByMimeType(mimeType: String): Flow<List<DocumentEntity?>?>
     suspend fun getDocumentById(documentId: Long): DocumentEntity?
-    suspend fun getDocumentsByIds(documentIds: List<Long>): List<DocumentEntity>
-    fun searchDocuments(searchQuery: String, mimeType: String): Flow<List<DocumentEntity>>
-    fun searchByName(searchQuery: String): Flow<List<DocumentEntity>>
+    fun getDocumentByIdAsFlow(documentId: Long): Flow<DocumentEntity?>
+    fun getDocumentsByIds(documentIds: List<Long>): Flow<List<DocumentEntity?>?>
+    fun searchDocuments(searchQuery: String, mimeType: String): Flow<List<DocumentEntity?>?>
+    fun searchByName(searchQuery: String): Flow<List<DocumentEntity?>?>
     suspend fun insertDocument(user: DocumentEntity)
     suspend fun updateBookmark(id: Long, bookmarked: Boolean)
     // Delete Document
     suspend fun delete(id: Long)
     suspend fun deleteByUri(uri: String)
     // Bookmark
-    fun getBookmarkedDocuments(): Flow<List<DocumentEntity>>
+    fun getBookmarkedDocuments(): Flow<List<DocumentEntity?>?>
     suspend fun updateBookmarkStatus(id: Long, isBookmarked: Boolean)
 }
 
 internal class DocumentsRepositoryImpl @Inject constructor(
     private val documentDao: DocumentDao
 ) : DocumentsRepository {
-    override fun getAllDocuments(): Flow<List<DocumentEntity>> {
+    override fun getAllDocuments(): Flow<List<DocumentEntity?>?> {
         return documentDao.getAllDocuments()
     }
 
-    override fun getDocumentsByMimeType(mimeType: String): Flow<List<DocumentEntity>> {
+    override fun getDocumentsByMimeType(mimeType: String): Flow<List<DocumentEntity?>?> {
         return documentDao.getDocumentsByMimeType(mimeType)
     }
 
@@ -45,18 +46,22 @@ internal class DocumentsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getDocumentsByIds(documentIds: List<Long>): List<DocumentEntity> {
+    override fun getDocumentByIdAsFlow(documentId: Long): Flow<DocumentEntity?> {
+        return documentDao.getDocumentByIdAsFlow(documentId)
+    }
+
+    override fun getDocumentsByIds(documentIds: List<Long>): Flow<List<DocumentEntity?>?> {
         return documentDao.getDocumentsByIds(documentIds)
     }
 
     override fun searchDocuments(
         searchQuery: String,
         mimeType: String
-    ): Flow<List<DocumentEntity>> {
+    ): Flow<List<DocumentEntity?>?> {
         return documentDao.searchDocuments(searchQuery, mimeType)
     }
 
-    override fun searchByName(searchQuery: String): Flow<List<DocumentEntity>> {
+    override fun searchByName(searchQuery: String): Flow<List<DocumentEntity?>?> {
         return documentDao.searchByName(searchQuery)
     }
 
@@ -73,7 +78,7 @@ internal class DocumentsRepositoryImpl @Inject constructor(
     }
 
     // Bookmark
-    override fun getBookmarkedDocuments(): Flow<List<DocumentEntity>> {
+    override fun getBookmarkedDocuments(): Flow<List<DocumentEntity?>?> {
         return documentDao.getBookmarkedDocuments()
     }
 

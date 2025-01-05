@@ -9,6 +9,7 @@ import com.codewithrish.pdfreader.core.domain.usecase.GetAllDocumentsUseCase
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.model.room.toDocument
 import com.codewithrish.pdfreader.ui.screen.tools.ToolType
+import com.codewithrish.pdfreader.ui.util.toDocumentsFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -85,11 +86,7 @@ class SelectDocumentViewModel @Inject constructor(
                     }
                     is DbResultState.Success -> updateState {
                         it.copy(
-                            documents = result.data.map { documentEntities ->
-                                documentEntities.map { documentEntity ->
-                                    documentEntity.toDocument()
-                                }
-                            },
+                            documents = result.data.toDocumentsFlow(),
                             isLoading = false,
                         )
                     }

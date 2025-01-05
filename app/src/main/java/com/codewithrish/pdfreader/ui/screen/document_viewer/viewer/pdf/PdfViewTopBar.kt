@@ -21,6 +21,7 @@ import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiEvent
 import com.codewithrish.pdfreader.ui.screen.document_viewer.ViewDocumentUiState
 import com.codewithrish.pdfreader.ui.theme.materialColor
+import com.codewithrish.pdfreader.ui.util.sharePdf
 import java.io.File
 
 @Composable
@@ -71,25 +72,10 @@ fun PdfViewTopBar(
                 tint = materialColor().onBackground,
                 modifier = Modifier.clickable {
                     // Trigger the share action when clicked
-                    sharePdf(context, state.document)
+                    context.sharePdf(state.document)
                 }
             )
         }
     }
 
-}
-
-// Function to share the PDF
-fun sharePdf(context: Context, document: Document?) {
-    document?.uri?.let {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", File(document.path))
-        val shareIntent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_TITLE, document.name)
-            putExtra(Intent.EXTRA_SUBJECT, document.name)
-            type = "application/pdf"
-        }
-        context.startActivity(Intent.createChooser(shareIntent, "Share PDF"))
-    }
 }

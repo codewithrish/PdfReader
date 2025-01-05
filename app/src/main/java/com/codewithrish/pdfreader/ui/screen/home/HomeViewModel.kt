@@ -7,11 +7,15 @@ import com.codewithrish.pdfreader.core.domain.usecase.CheckFileExistsUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.DeleteDocumentByUriUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.DeleteDocumentUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.GetAllDocumentsUseCase
+import com.codewithrish.pdfreader.core.domain.usecase.GetDocumentByIdAsFlowUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.LoadFilesToDbUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.UpdateBookmarkStatusUseCase
 import com.codewithrish.pdfreader.core.model.home.Document
+import com.codewithrish.pdfreader.core.model.room.DocumentEntity
 import com.codewithrish.pdfreader.core.model.room.toDocument
+import com.codewithrish.pdfreader.ui.util.toDocumentFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -20,6 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val getDocumentByIdAsFlowUseCase: GetDocumentByIdAsFlowUseCase,
     private val getAllDocumentsUseCase: GetAllDocumentsUseCase,
     private val deleteDocumentUseCase: DeleteDocumentUseCase,
     private val updateBookmarkStatusUseCase: UpdateBookmarkStatusUseCase,
@@ -56,6 +61,18 @@ class HomeViewModel @Inject constructor(
             is HomeUiEvent.CheckFileExists -> {
                 Timber.tag("HomeViewModel").d("CheckFileExists: $event")
                 checkFileExists(event.uri)
+            }
+
+            is HomeUiEvent.ShowHideDocumentOptions -> {
+                Timber.tag("HomeViewModel").d("ShowHideDocumentOptions: $event")
+                showHideDocumentOptions(event.showHide, event.documentId)
+            }
+
+            is HomeUiEvent.PrintDocument -> {
+                Timber.tag("HomeViewModel").d("PrintDocument: $event")
+            }
+            is HomeUiEvent.ShareDocument -> {
+                Timber.tag("HomeViewModel").d("ShareDocument: $event")
             }
         }
     }
@@ -127,15 +144,18 @@ class HomeViewModel @Inject constructor(
                     is DbResultState.Loading -> updateState {
                         it.copy(isLoading = true)
                     }
-                    is DbResultState.Success -> updateState {
-                        it.copy(
-                            documents = result.data.map { documentEntities ->
-                                documentEntities.map { documentEntity ->
-                                    documentEntity.toDocument()
-                                }
-                            },
-                            isLoading = false,
-                        )
+                    is DbResultState.Success -> {
+                        val documents: Flow<List<Document>> = result.data.map { entityList ->
+                            entityList.orEmpty() // Handles null lists
+                                .filterNotNull() // Filters out null DocumentEntity
+                                .map { it.toDocument() } // Maps each DocumentEntity to Document
+                        }
+                        updateState {
+                            it.copy(
+                                documents = documents,
+                                isLoading = false,
+                            )
+                        }
                     }
                 }
             }
@@ -169,6 +189,33 @@ class HomeViewModel @Inject constructor(
                     DbResultState.Idle -> {}
                     DbResultState.Loading -> {}
                     is DbResultState.Success -> {}
+                }
+            }
+        }
+    }
+
+    private fun showHideDocumentOptions(showHide: Boolean, documentId: Long?) {
+        viewModelScope.launch {
+            updateState { it.copy(showHideDocumentOptions = showHide) }
+            documentId?.let { id ->
+                getDocumentByIdAsFlowUseCase(documentId).collectLatest { result ->
+                    when (result) {
+                        is DbResultState.Error -> updateState {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = Pair(it.errorMessage.first, result.error)
+                            )
+                        }
+                        is DbResultState.Idle -> updateState {
+                            HomeUiState(isLoading = false)
+                        }
+                        is DbResultState.Loading -> {}
+                        is DbResultState.Success -> updateState {
+                            it.copy(
+                                selectedDocumentForDetails = result.data.toDocumentFlow(),
+                            )
+                        }
+                    }
                 }
             }
         }

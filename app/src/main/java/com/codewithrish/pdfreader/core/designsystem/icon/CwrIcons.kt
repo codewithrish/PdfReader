@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
@@ -41,6 +42,7 @@ object CwrIcons {
     val Settings = Icons.Outlined.Settings
     val Search = Icons.Outlined.Search
 
+    val Delete = Icons.Default.Delete
     val Share = Icons.Default.Share
     val CheckCircle = Icons.Default.CheckCircle
     val ViewMode = Icons.Default.Book

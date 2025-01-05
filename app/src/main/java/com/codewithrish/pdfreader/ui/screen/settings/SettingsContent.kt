@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -43,10 +45,12 @@ fun SettingsContent(
     appVersionClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val scrollableState = rememberScrollState()
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .verticalScroll(scrollableState)
+            .padding(16.dp),
     ) {
         SettingItem(
             title = stringResource(R.string.theme),
@@ -108,7 +112,7 @@ fun SettingItem(
     startIcon: ImageVector = CwrIcons.LightTheme,
     endIcon: ImageVector? = null,
     endText: String? = null,
-    iconTint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    iconTint: Color = materialColor().onSurfaceVariant,
     shape: RoundedCornerShape = middleItemRoundedCornerShape(),
     title: String,
     textStyle: TextStyle = materialTextStyle().bodyLarge,

@@ -77,7 +77,9 @@ internal class FileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun checkFileExists(uri: String): Boolean {
-        return doesFileExist(context, Uri.parse(uri))
+        return withContext(Dispatchers.IO) {
+            doesFileExist(context, Uri.parse(uri))
+        }
     }
 
     @SuppressLint("Recycle")

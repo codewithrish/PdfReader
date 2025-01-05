@@ -4,11 +4,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -19,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -28,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.codewithrish.pdfreader.R
 import com.codewithrish.pdfreader.core.designsystem.component.CwrContentBox
+import com.codewithrish.pdfreader.core.designsystem.component.CwrModalBottomSheet
 import com.codewithrish.pdfreader.core.designsystem.component.CwrText
 import com.codewithrish.pdfreader.core.designsystem.icon.CwrIcons
 import com.codewithrish.pdfreader.core.model.home.Document
@@ -35,6 +40,8 @@ import com.codewithrish.pdfreader.ui.components.EmptyScreenWithText
 import com.codewithrish.pdfreader.ui.components.LoadingScreen
 import com.codewithrish.pdfreader.ui.theme.materialColor
 import com.codewithrish.pdfreader.ui.theme.materialTextStyle
+import com.codewithrish.pdfreader.ui.util.printPdf
+import com.codewithrish.pdfreader.ui.util.sharePdf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -66,6 +73,7 @@ fun HomeScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    val context = LocalContext.current
     var showEmptyScreen by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -93,6 +101,9 @@ fun HomeScreen(
                                     onBookmarkClick = { id, isBookmarked ->
                                         onEvent(HomeUiEvent.OnBookmarkClick(id, isBookmarked))
                                     },
+                                    onThreeDotClick = { documentId ->
+                                        onEvent(HomeUiEvent.ShowHideDocumentOptions(true, documentId))
+                                    },
                                     modifier = Modifier
                                 )
                             }
@@ -106,6 +117,34 @@ fun HomeScreen(
                             }
                         }
                     }
+                }
+            }
+            CwrModalBottomSheet(
+                isSheetVisible = state.showHideDocumentOptions,
+                onDismiss = {
+                    onEvent(HomeUiEvent.ShowHideDocumentOptions(false))
+                }
+            ) {
+                state.selectedDocumentForDetails.collectAsStateWithLifecycle(null).value?.let { document ->
+                    DocumentOptions(
+                        document = document,
+                        onEvent = onEvent,
+                        shareDocument = {
+                            context.sharePdf(it)
+                            onEvent(HomeUiEvent.ShareDocument(document))
+                        },
+                        printDocument = {
+                            context.printPdf(it)
+                            onEvent(HomeUiEvent.PrintDocument(document))
+                        },
+                        deleteDocument = {
+                            // @TODO implement delete document
+                            onEvent(HomeUiEvent.DeleteDocument(document))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()),
+                    )
                 }
             }
         }

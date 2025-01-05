@@ -7,6 +7,7 @@ import com.codewithrish.pdfreader.core.domain.usecase.GetDocumentsByIdsUseCase
 import com.codewithrish.pdfreader.core.domain.usecase.MergePdfUseCase
 import com.codewithrish.pdfreader.core.model.home.Document
 import com.codewithrish.pdfreader.core.model.room.toDocument
+import com.codewithrish.pdfreader.ui.util.toDocumentsFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -52,7 +53,7 @@ class MergePdfViewModel @Inject constructor(
                     is DbResultState.Success -> updateState {
                         it.copy(
                             isLoading = false,
-                            selectedDocuments = result.data.map { it1 -> it1.toDocument() }
+                            selectedDocuments = result.data.toDocumentsFlow()
                         )
                     }
                 }
